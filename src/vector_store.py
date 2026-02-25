@@ -2,23 +2,35 @@
 import chromadb
 from pathlib import Path
 
+from tqdm import tqdm
+
 import config
 from src.chunking import Chunk
 from src.embedding import embed_texts, embed_query
 
 
+_chroma_client = None
+_chroma_collection = None
+
+
 def get_chroma_client() -> chromadb.PersistentClient:
-    """Get or create ChromaDB persistent client."""
-    config.CHROMA_DIR.mkdir(parents=True, exist_ok=True)
-    return chromadb.PersistentClient(path=str(config.CHROMA_DIR))
+    """Get or create ChromaDB persistent client (cached)."""
+    global _chroma_client
+    if _chroma_client is None:
+        config.CHROMA_DIR.mkdir(parents=True, exist_ok=True)
+        _chroma_client = chromadb.PersistentClient(path=str(config.CHROMA_DIR))
+    return _chroma_client
 
 
 def get_or_create_collection(client: chromadb.PersistentClient) -> chromadb.Collection:
-    """Get or create the medical reports collection."""
-    return client.get_or_create_collection(
-        name=config.COLLECTION_NAME,
-        metadata={"hnsw:space": "cosine"},
-    )
+    """Get or create the medical reports collection (cached)."""
+    global _chroma_collection
+    if _chroma_collection is None:
+        _chroma_collection = client.get_or_create_collection(
+            name=config.COLLECTION_NAME,
+            metadata={"hnsw:space": "cosine"},
+        )
+    return _chroma_collection
 
 
 def index_chunks(chunks: list[Chunk], batch_size: int = 50):
@@ -39,7 +51,8 @@ def index_chunks(chunks: list[Chunk], batch_size: int = 50):
         print("Delete the chroma_db folder to re-index.")
         return
 
-    print(f"Indexing {len(chunks)} chunks into ChromaDB...")
+    num_batches = (len(chunks) + batch_size - 1) // batch_size
+    pbar = tqdm(total=len(chunks), desc="Indexing chunks", unit="chunk")
 
     for i in range(0, len(chunks), batch_size):
         batch = chunks[i:i + batch_size]
@@ -58,7 +71,9 @@ def index_chunks(chunks: list[Chunk], batch_size: int = 50):
             metadatas=metadatas,
         )
 
-        print(f"  Indexed {min(i + batch_size, len(chunks))}/{len(chunks)} chunks")
+        pbar.update(len(batch))
+
+    pbar.close()
 
     print(f"Indexing complete. Total documents: {collection.count()}")
 

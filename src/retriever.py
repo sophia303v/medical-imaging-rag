@@ -128,7 +128,6 @@ def retrieve(query: str, image: Image.Image | None = None, top_k: int = None) ->
         combined_query = query
 
     # Search vector store
-    print(f"Searching for top-{top_k} relevant documents...")
     results = search(combined_query, n_results=top_k)
 
     return RetrievalResult(

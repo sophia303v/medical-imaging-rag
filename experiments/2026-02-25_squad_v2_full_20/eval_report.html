@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RAG Evaluation Report</title>
+<script src="https://cdn.plot.ly/plotly-2.35.0.min.js"></script>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+         background: #f5f7fa; color: #1a1a2e; padding: 2rem; }
+  .container { max-width: 1200px; margin: 0 auto; }
+  h1 { font-size: 1.8rem; margin-bottom: 0.3rem; }
+  .subtitle { color: #666; margin-bottom: 2rem; font-size: 0.95rem; }
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem; }
+  .card { background: #fff; border-radius: 12px; padding: 1.5rem;
+           box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+  .card h2 { font-size: 1.1rem; margin-bottom: 1rem; color: #16213e; }
+  .full-width { grid-column: 1 / -1; }
+  table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+  th { background: #16213e; color: #fff; padding: 0.6rem 0.5rem; text-align: left;
+       position: sticky; top: 0; }
+  td { padding: 0.5rem; border-bottom: 1px solid #e8e8e8; }
+  tr:hover { background: #f0f4ff; }
+  .score-cell { text-align: center; font-weight: 600; border-radius: 4px; }
+  .score-high { background: #d4edda; color: #155724; }
+  .score-mid { background: #fff3cd; color: #856404; }
+  .score-low { background: #f8d7da; color: #721c24; }
+  .score-na { background: #e2e3e5; color: #6c757d; }
+  .metric-desc { color: #888; font-size: 0.78rem; font-weight: 400; }
+  .stats { display: flex; gap: 1.5rem; margin-bottom: 1.5rem; flex-wrap: wrap; }
+  .stat-box { background: #fff; border-radius: 10px; padding: 1rem 1.5rem;
+               box-shadow: 0 2px 8px rgba(0,0,0,0.08); text-align: center; min-width: 140px; }
+  .stat-box .value { font-size: 1.6rem; font-weight: 700; color: #0f3460; }
+  .stat-box .label { font-size: 0.8rem; color: #888; margin-top: 0.2rem; }
+  .detail-scroll { max-height: 500px; overflow-y: auto; }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>RAG Evaluation Report — 2026-02-25_squad_v2_full_20 | squad_v2 | K=3</h1>
+  <p class="subtitle">20 questions evaluated in 2149.2s | Dataset: 2026-02-25_squad_v2_full_20 | squad_v2 | K=3 | TOP_K: 3</p>
+
+  <!-- Quick stats -->
+  <div class="stats">
+    
+    <div class="stat-box"><div class="value">0.52</div><div class="label">Overall Score</div></div>
+    <div class="stat-box"><div class="value">0.30</div><div class="label">Retrieval Quality</div></div>
+    <div class="stat-box"><div class="value">0.66</div><div class="label">Generation Quality</div></div>
+    <div class="stat-box"><div class="value">0.69</div><div class="label">Medical Judge</div></div>
+    <div class="stat-box"><div class="value">20</div><div class="label">Questions</div></div>
+    
+  </div>
+
+  <!-- Charts row -->
+  <div class="grid">
+    <div class="card">
+      <h2>Overall Metrics (Radar)</h2>
+      <div id="radar-chart"></div>
+    </div>
+    <div class="card">
+      <h2>Scores by Category</h2>
+      <div id="bar-chart"></div>
+    </div>
+  </div>
+
+  <!-- Summary table -->
+  <div class="card full-width" style="margin-bottom:1.5rem;">
+    <h2>Metric Summary</h2>
+    <table>
+      <tr><th>Metric</th><th>Mean</th><th>Min</th><th>Max</th><th>Count</th></tr>
+      <tr><td><strong>Ctx Precision</strong><br><span class='metric-desc'>Retrieved docs 中有多少比例是相關的 (Precision = hits / retrieved)</span></td><td class='score-cell score-low'>0.15</td><td class='score-cell'>0.00</td><td class='score-cell'>0.33</td><td>20</td></tr>
+<tr><td><strong>Ctx Recall</strong><br><span class='metric-desc'>相關 docs 中有多少被成功檢索到 (Recall = hits / relevant)</span></td><td class='score-cell score-mid'>0.45</td><td class='score-cell'>0.00</td><td class='score-cell'>1.00</td><td>20</td></tr>
+<tr><td><strong>Faithfulness</strong><br><span class='metric-desc'>答案是否忠於檢索到的 context，不捏造事實 (LLM 評分)</span></td><td class='score-cell score-high'>0.81</td><td class='score-cell'>0.00</td><td class='score-cell'>1.00</td><td>17</td></tr>
+<tr><td><strong>Relevancy</strong><br><span class='metric-desc'>答案是否切題、有回答到問題 (LLM 評分)</span></td><td class='score-cell score-mid'>0.51</td><td class='score-cell'>0.00</td><td class='score-cell'>1.00</td><td>20</td></tr>
+<tr><td><strong>Medical</strong><br><span class='metric-desc'>醫學術語是否正確、臨床上是否合理 (LLM Judge)</span></td><td class='score-cell score-low'>0.38</td><td class='score-cell'>0.00</td><td class='score-cell'>0.50</td><td>8</td></tr>
+<tr><td><strong>Citation</strong><br><span class='metric-desc'>是否有引用來源、引用是否正確 (LLM Judge)</span></td><td class='score-cell score-high'>1.00</td><td class='score-cell'>1.00</td><td class='score-cell'>1.00</td><td>8</td></tr>
+<tr><td><strong>Completeness</strong><br><span class='metric-desc'>相比 ground truth，答案的完整度如何 (LLM Judge)</span></td><td class='score-cell score-high'>0.70</td><td class='score-cell'>0.00</td><td class='score-cell'>1.00</td><td>8</td></tr>
+    </table>
+  </div>
+
+  <!-- Detail table -->
+  <div class="card full-width">
+    <h2>Per-Question Results</h2>
+    <div class="detail-scroll">
+    <table>
+      <tr>
+        <th>ID</th><th>Question</th><th>Category</th><th>Difficulty</th>
+        <th>Ctx Prec</th><th>Ctx Rec</th><th>Faith</th><th>Relev</th>
+        <th>Medical</th><th>Citation</th><th>Complete</th>
+      </tr>
+      <tr><td>sq_00000</td><td title="In what country is Normandy located?" style="max-width:300px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">In what country is Normandy located?</td><td>squad_v2</td><td>unknown</td><td class='score-cell score-low'>0.00</td><td class='score-cell score-low'>0.00</td><td class='score-cell score-high'>0.90</td><td class='score-cell score-high'>0.70</td><td class='score-cell score-na'>N/A</td><td class='score-cell score-na'>N/A</td><td class='score-cell score-na'>N/A</td></tr>
+<tr><td>sq_00001</td><td title="When were the Normans in Normandy?" style="max-width:300px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">When were the Normans in Normandy?</td><td>squad_v2</td><td>unknown</td><td class='score-cell score-low'>0.33</td><td class='score-cell score-high'>1.00</td><td class='score-cell score-high'>0.90</td><td class='score-cell score-low'>0.00</td><td class='score-cell score-na'>N/A</td><td class='score-cell score-na'>N/A</td><td class='score-cell score-na'>N/A</td></tr>
+<tr><td>sq_00002</td><td title="From which countries did the Norse originate?" style="max-width:300px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">From which countries did the Norse originate?</td><td>squad_v2</td><td>unknown</td><td class='score-cell score-low'>0.00</td><td class='score-cell score-low'>0.00</td><td class='score-cell score-na'>N/A</td><td class='score-cell score-low'>0.20</td><td class='score-cell score-na'>N/A</td><td class='score-cell score-na'>N/A</td><td class='score-cell score-na'>N/A</td></tr>
+<tr><td>sq_00003</td><td title="Who was the Norse leader?" style="max-width:300px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Who was the Norse leader?</td><td>squad_v2</td><td>unknown</td><td class='score-cell score-low'>0.00</td><td class='score-cell score-low'>0.00</td><td class='score-cell score-na'>N/A</td><td class='score-cell score-high'>0.70</td><td class='score-cell score-na'>N/A</td><td class='score-cell score-na'>N/A</td><td class='score-cell score-na'>N/A</td></tr>
+<tr><td>sq_00004</td><td title="What century did the Normans first gain their separate identity?" style="max-width:300px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">What century did the Normans first gain their separate ident...</td><td>squad_v2</td><td>unknown</td><td class='score-cell score-low'>0.33</td><td class='score-cell score-high'>1.00</td><td class='score-cell score-high'>1.00</td><td class='score-cell score-high'>1.00</td><td class='score-cell score-mid'>0.50</td><td class='score-cell score-high'>1.00</td><td class='score-cell score-high'>1.00</td></tr>
+<tr><td>sq_00005</td><td title="Who gave their name to Normandy in the 1000's and 1100's" style="max-width:300px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Who gave their name to Normandy in the 1000's and 1100's</td><td>unanswerable</td><td>unknown</td><td class='score-cell score-low'>0.33</td><td class='score-cell score-high'>1.00</td><td class='score-cell score-high'>0.90</td><td class='score-cell score-high'>0.90</td><td class='score-cell score-mid'>0.50</td><td class='score-cell score-high'>1.00</td><td class='score-cell score-high'>1.00</td></tr>
+<tr><td>sq_00006</td><td title="What is France a region of?" style="max-width:300px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">What is France a region of?</td><td>unanswerable</td><td>unknown</td><td class='score-cell score-low'>0.00</td><td class='score-cell score-low'>0.00</td><td class='score-cell score-high'>0.80</td><td class='score-cell score-low'>0.20</td><td class='score-cell score-mid'>0.50</td><td class='score-cell score-high'>1.00</td><td class='score-cell score-high'>0.80</td></tr>
+<tr><td>sq_00007</td><td title="Who did King Charles III swear fealty to?" style="max-width:300px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Who did King Charles III swear fealty to?</td><td>unanswerable</td><td>unknown</td><td class='score-cell score-low'>0.00</td><td class='score-cell score-low'>0.00</td><td class='score-cell score-high'>0.90</td><td class='score-cell score-low'>0.00</td><td class='score-cell score-na'>N/A</td><td class='score-cell score-na'>N/A</td><td class='score-cell score-na'>N/A</td></tr>
+<tr><td>sq_00008</td><td title="When did the Frankish identity emerge?" style="max-width:300px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">When did the Frankish identity emerge?</td><td>unanswerable</td><td>unknown</td><td class='score-cell score-low'>0.33</td><td class='score-cell score-high'>1.00</td><td class='score-cell score-high'>0.70</td><td class='score-cell score-mid'>0.40</td><td class='score-cell score-na'>N/A</td><td class='score-cell score-na'>N/A</td><td class='score-cell score-na'>N/A</td></tr>
+<tr><td>sq_00009</td><td title="Who was the duke in the battle of Hastings?" style="max-width:300px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Who was the duke in the battle of Hastings?</td><td>squad_v2</td><td>unknown</td><td class='score-cell score-low'>0.00</td><td class='score-cell score-low'>0.00</td><td class='score-cell score-high'>1.00</td><td class='score-cell score-high'>0.90</td><td class='score-cell score-na'>N/A</td><td class='score-cell score-na'>N/A</td><td class='score-cell score-na'>N/A</td></tr>
+<tr><td>sq_00010</td><td title="Who ruled the duchy of Normandy" style="max-width:300px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Who ruled the duchy of Normandy</td><td>squad_v2</td><td>unknown</td><td class='score-cell score-low'>0.33</td><td class='score-cell score-high'>1.00</td><td class='score-cell score-high'>0.80</td><td class='score-cell score-low'>0.20</td><td class='score-cell score-mid'>0.50</td><td class='score-cell score-high'>1.00</td><td class='score-cell score-mid'>0.50</td></tr>
+<tr><td>sq_00011</td><td title="What religion were the Normans" style="max-width:300px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">What religion were the Normans</td><td>squad_v2</td><td>unknown</td><td class='score-cell score-low'>0.33</td><td class='score-cell score-high'>1.00</td><td class='score-cell score-high'>0.90</td><td class='score-cell score-high'>0.70</td><td class='score-cell score-na'>N/A</td><td class='score-cell score-na'>N/A</td><td class='score-cell score-na'>N/A</td></tr>
+<tr><td>sq_00012</td><td title="What type of major impact did the Norman dynasty have on modern Europe?" style="max-width:300px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">What type of major impact did the Norman dynasty have on mod...</td><td>unanswerable</td><td>unknown</td><td class='score-cell score-low'>0.33</td><td class='score-cell score-high'>1.00</td><td class='score-cell score-high'>0.70</td><td class='score-cell score-low'>0.20</td><td class='score-cell score-na'>N/A</td><td class='score-cell score-na'>N/A</td><td class='score-cell score-na'>N/A</td></tr>
+<tr><td>sq_00013</td><td title="Who was famed for their Christian spirit?" style="max-width:300px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Who was famed for their Christian spirit?</td><td>unanswerable</td><td>unknown</td><td class='score-cell score-low'>0.00</td><td class='score-cell score-low'>0.00</td><td class='score-cell score-high'>0.90</td><td class='score-cell score-high'>0.90</td><td class='score-cell score-na'>N/A</td><td class='score-cell score-na'>N/A</td><td class='score-cell score-na'>N/A</td></tr>
+<tr><td>sq_00014</td><td title="Who assimilted the Roman language?" style="max-width:300px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Who assimilted the Roman language?</td><td>unanswerable</td><td>unknown</td><td class='score-cell score-low'>0.00</td><td class='score-cell score-low'>0.00</td><td class='score-cell score-low'>0.00</td><td class='score-cell score-low'>0.00</td><td class='score-cell score-low'>0.00</td><td class='score-cell score-high'>1.00</td><td class='score-cell score-low'>0.00</td></tr>
+<tr><td>sq_00015</td><td title="Who ruled the country of Normandy?" style="max-width:300px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Who ruled the country of Normandy?</td><td>unanswerable</td><td>unknown</td><td class='score-cell score-low'>0.00</td><td class='score-cell score-low'>0.00</td><td class='score-cell score-na'>N/A</td><td class='score-cell score-low'>0.20</td><td class='score-cell score-low'>0.00</td><td class='score-cell score-high'>1.00</td><td class='score-cell score-mid'>0.50</td></tr>
+<tr><td>sq_00016</td><td title="What principality did William the conquerer found?" style="max-width:300px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">What principality did William the conquerer found?</td><td>unanswerable</td><td>unknown</td><td class='score-cell score-low'>0.00</td><td class='score-cell score-low'>0.00</td><td class='score-cell score-high'>0.90</td><td class='score-cell score-high'>0.70</td><td class='score-cell score-mid'>0.50</td><td class='score-cell score-high'>1.00</td><td class='score-cell score-high'>0.80</td></tr>
+<tr><td>sq_00017</td><td title="What is the original meaning of the word Norman?" style="max-width:300px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">What is the original meaning of the word Norman?</td><td>squad_v2</td><td>unknown</td><td class='score-cell score-low'>0.33</td><td class='score-cell score-high'>1.00</td><td class='score-cell score-high'>0.90</td><td class='score-cell score-high'>0.90</td><td class='score-cell score-mid'>0.50</td><td class='score-cell score-high'>1.00</td><td class='score-cell score-high'>1.00</td></tr>
+<tr><td>sq_00018</td><td title="When was the Latin version of the word Norman first recorded?" style="max-width:300px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">When was the Latin version of the word Norman first recorded...</td><td>squad_v2</td><td>unknown</td><td class='score-cell score-low'>0.00</td><td class='score-cell score-low'>0.00</td><td class='score-cell score-high'>0.70</td><td class='score-cell score-high'>0.70</td><td class='score-cell score-na'>N/A</td><td class='score-cell score-na'>N/A</td><td class='score-cell score-na'>N/A</td></tr>
+<tr><td>sq_00019</td><td title="What name comes from the English words Normans/Normanz?" style="max-width:300px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">What name comes from the English words Normans/Normanz?</td><td>unanswerable</td><td>unknown</td><td class='score-cell score-low'>0.33</td><td class='score-cell score-high'>1.00</td><td class='score-cell score-high'>0.90</td><td class='score-cell score-high'>0.70</td><td class='score-cell score-na'>N/A</td><td class='score-cell score-na'>N/A</td><td class='score-cell score-na'>N/A</td></tr>
+    </table>
+    </div>
+  </div>
+</div>
+
+<script>
+// Radar chart
+
+Plotly.newPlot('radar-chart', [{
+  type: 'scatterpolar',
+  r: [0.15, 0.45, 0.8118, 0.51, 0.375, 1.0, 0.7, 0.15],
+  theta: ["Ctx Precision", "Ctx Recall", "Faithfulness", "Relevancy", "Medical", "Citation", "Completeness", "Ctx Precision"],
+  fill: 'toself',
+  fillcolor: 'rgba(15,52,96,0.15)',
+  line: { color: '#0f3460', width: 2 },
+  marker: { size: 6, color: '#0f3460' }
+}], {
+  polar: {
+    radialaxis: { visible: true, range: [0, 1], tickvals: [0.2, 0.4, 0.6, 0.8, 1.0] }
+  },
+  margin: { t: 30, b: 30, l: 60, r: 60 },
+  height: 350,
+  showlegend: false
+}, { responsive: true });
+
+
+// Bar chart
+
+Plotly.newPlot('bar-chart', [{"x": ["squad_v2", "unanswerable"], "y": [0.1666, 0.1333], "name": "Ctx Precision", "type": "bar", "marker": {"color": "#0f3460"}}, {"x": ["squad_v2", "unanswerable"], "y": [0.5, 0.4], "name": "Ctx Recall", "type": "bar", "marker": {"color": "#1a73e8"}}, {"x": ["squad_v2", "unanswerable"], "y": [0.8875, 0.7444], "name": "Faithfulness", "type": "bar", "marker": {"color": "#4CAF50"}}, {"x": ["squad_v2", "unanswerable"], "y": [0.6, 0.42], "name": "Relevancy", "type": "bar", "marker": {"color": "#FF9800"}}, {"x": ["squad_v2", "unanswerable"], "y": [0.5, 0.3], "name": "Medical", "type": "bar", "marker": {"color": "#9C27B0"}}, {"x": ["squad_v2", "unanswerable"], "y": [1.0, 1.0], "name": "Citation", "type": "bar", "marker": {"color": "#E91E63"}}, {"x": ["squad_v2", "unanswerable"], "y": [0.8333, 0.62], "name": "Completeness", "type": "bar", "marker": {"color": "#00BCD4"}}], {
+  barmode: 'group',
+  yaxis: { range: [0, 1], title: 'Score' },
+  xaxis: { title: 'Category' },
+  margin: { t: 30, b: 60, l: 50, r: 20 },
+  height: 350,
+  legend: { orientation: 'h', y: -0.25, x: 0.5, xanchor: 'center', font: { size: 10 } }
+}, { responsive: true });
+
+</script>
+</body>
+</html>

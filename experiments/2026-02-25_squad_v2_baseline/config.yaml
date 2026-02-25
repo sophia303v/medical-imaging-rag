@@ -1,0 +1,20 @@
+timestamp: '2026-02-25T10:51:19.827782'
+python_version: 3.10.19 (main, Oct 21 2025, 16:37:10) [Clang 20.1.8 ]
+GEMINI_MODEL: gemini-2.0-flash
+EMBEDDING_MODEL: text-embedding-004
+EMBEDDING_BACKEND: sentence-transformers
+SENTENCE_TRANSFORMER_MODEL: all-MiniLM-L12-v2
+GENERATION_BACKEND: ollama
+OLLAMA_MODEL: llama3.1:8b
+OLLAMA_BASE_URL: http://localhost:11434
+VISION_BACKEND: gemini
+OLLAMA_VISION_MODEL: llava:7b
+CHUNK_SIZE: 512
+CHUNK_OVERLAP: 50
+TOP_K: 3
+COLLECTION_NAME: medical_reports
+EMBEDDING_DIMENSION: 384
+DATASET_NAME: squad_v2
+yaml_config_source: null
+cli_overrides:
+  DATASET_NAME: squad_v2

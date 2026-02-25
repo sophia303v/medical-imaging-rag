@@ -1,0 +1,322 @@
+[
+  {
+    "id": "q01",
+    "question": "What are the findings in report CXR_0001?",
+    "ground_truth_answer": "The heart size is normal. The mediastinum is unremarkable. There is a patchy opacity in the right lower lobe consistent with airspace disease. No pleural effusion. No pneumothorax. The osseous structures are intact.",
+    "relevant_report_uids": ["CXR_0001"],
+    "category": "factual",
+    "difficulty": "easy"
+  },
+  {
+    "id": "q02",
+    "question": "What is the impression for patient CXR_0001?",
+    "ground_truth_answer": "Right lower lobe pneumonia.",
+    "relevant_report_uids": ["CXR_0001"],
+    "category": "factual",
+    "difficulty": "easy"
+  },
+  {
+    "id": "q03",
+    "question": "What was the clinical indication for the chest X-ray of patient CXR_0002?",
+    "ground_truth_answer": "Shortness of breath, rule out CHF.",
+    "relevant_report_uids": ["CXR_0002"],
+    "category": "factual",
+    "difficulty": "easy"
+  },
+  {
+    "id": "q04",
+    "question": "Describe the cardiac findings in report CXR_0002.",
+    "ground_truth_answer": "The cardiac silhouette is enlarged. There is cephalization of the pulmonary vasculature. Bilateral pleural effusions are noted, greater on the right than the left. Kerley B lines are present. These findings are consistent with congestive heart failure.",
+    "relevant_report_uids": ["CXR_0002"],
+    "category": "factual",
+    "difficulty": "easy"
+  },
+  {
+    "id": "q05",
+    "question": "What is the diagnosis for the patient with chest pain in report CXR_0003?",
+    "ground_truth_answer": "Right apical pneumothorax. There is a visible visceral pleural line along the right apex with absence of lung markings peripheral to this line.",
+    "relevant_report_uids": ["CXR_0003"],
+    "category": "factual",
+    "difficulty": "easy"
+  },
+  {
+    "id": "q06",
+    "question": "Were any abnormalities found in the pre-operative evaluation chest X-ray CXR_0004?",
+    "ground_truth_answer": "No acute cardiopulmonary abnormality was found. The lungs are clear bilaterally with no focal consolidation, pleural effusion, or pneumothorax. The cardiac silhouette is normal in size and the mediastinal contours are normal.",
+    "relevant_report_uids": ["CXR_0004"],
+    "category": "factual",
+    "difficulty": "easy"
+  },
+  {
+    "id": "q07",
+    "question": "What is the size of the pulmonary nodule in report CXR_0005 and what is the recommendation?",
+    "ground_truth_answer": "There is a 1.2 cm solitary pulmonary nodule in the right upper lobe, unchanged compared to prior examination dated 6 months ago. The recommendation is continued surveillance per Fleischner Society guidelines.",
+    "relevant_report_uids": ["CXR_0005"],
+    "category": "factual",
+    "difficulty": "easy"
+  },
+  {
+    "id": "q08",
+    "question": "What findings suggest malignancy in report CXR_0006?",
+    "ground_truth_answer": "There is a large right hilar mass measuring approximately 5 cm with associated right upper lobe atelectasis and mediastinal lymphadenopathy, suspicious for primary lung malignancy. A small right pleural effusion is also present.",
+    "relevant_report_uids": ["CXR_0006"],
+    "category": "factual",
+    "difficulty": "easy"
+  },
+  {
+    "id": "q09",
+    "question": "What does report CXR_0009 show about the patient's lungs?",
+    "ground_truth_answer": "The lungs are hyperinflated with flattening of the diaphragms, consistent with chronic obstructive pulmonary disease. There is peribronchial thickening. No focal consolidation or pleural effusion. The findings are consistent with COPD with no acute superimposed process.",
+    "relevant_report_uids": ["CXR_0009"],
+    "category": "factual",
+    "difficulty": "easy"
+  },
+  {
+    "id": "q10",
+    "question": "What is the impression of the sarcoidosis follow-up in report CXR_0014?",
+    "ground_truth_answer": "Bilateral hilar lymphadenopathy with upper lobe predominant interstitial disease, consistent with known sarcoidosis. Stable compared to prior examination.",
+    "relevant_report_uids": ["CXR_0014"],
+    "category": "factual",
+    "difficulty": "easy"
+  },
+  {
+    "id": "q11",
+    "question": "Which report describes a patient with cough and fever?",
+    "ground_truth_answer": "Report CXR_0001 describes a patient with cough and fever for 3 days. The findings show a patchy opacity in the right lower lobe consistent with airspace disease, and the impression is right lower lobe pneumonia.",
+    "relevant_report_uids": ["CXR_0001"],
+    "category": "factual",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q12",
+    "question": "Which patient has findings consistent with tuberculosis?",
+    "ground_truth_answer": "Report CXR_0011 shows a right upper lobe cavitary lesion measuring approximately 3 cm with surrounding tree-in-bud opacities, highly suspicious for active pulmonary tuberculosis. Calcified right hilar granulomas suggest prior granulomatous disease.",
+    "relevant_report_uids": ["CXR_0011"],
+    "category": "factual",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q13",
+    "question": "Which report mentions Kerley B lines and what do they indicate?",
+    "ground_truth_answer": "Report CXR_0002 mentions Kerley B lines. They are present in the context of an enlarged cardiac silhouette, cephalization of pulmonary vasculature, and bilateral pleural effusions, indicating congestive heart failure.",
+    "relevant_report_uids": ["CXR_0002"],
+    "category": "factual",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q14",
+    "question": "Which report describes a spiculated lung mass?",
+    "ground_truth_answer": "Report CXR_0017 describes a 2 cm spiculated mass in the left upper lobe with mild left hilar prominence. The impression indicates it is suspicious for malignancy in a patient with smoking history, and CT chest with contrast is recommended.",
+    "relevant_report_uids": ["CXR_0017"],
+    "category": "factual",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q15",
+    "question": "Which patient presented with pleuritic chest pain and what was found?",
+    "ground_truth_answer": "Report CXR_0020 describes a patient with pleuritic chest pain. Findings include a wedge-shaped opacity in the right lower lobe periphery with its base against the pleural surface and a small right pleural effusion, concerning for pulmonary infarction. CT pulmonary angiography was recommended to evaluate for pulmonary embolism.",
+    "relevant_report_uids": ["CXR_0020"],
+    "category": "factual",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q16",
+    "question": "Which report describes ARDS and what are the key findings?",
+    "ground_truth_answer": "Report CXR_0016 describes ARDS. Key findings include diffuse bilateral alveolar opacities involving all lung zones with air bronchograms bilaterally. An endotracheal tube is present with tip 4 cm above the carina.",
+    "relevant_report_uids": ["CXR_0016"],
+    "category": "factual",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q17",
+    "question": "Which patient was evaluated for difficulty swallowing?",
+    "ground_truth_answer": "Report CXR_0012 describes a patient evaluated for difficulty swallowing. Findings include a possible hiatal hernia (retrocardiac soft tissue density) and widening of the mediastinum at the aortic arch level, likely representing a tortuous aorta.",
+    "relevant_report_uids": ["CXR_0012"],
+    "category": "factual",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q18",
+    "question": "Which report shows aspiration pneumonia findings?",
+    "ground_truth_answer": "Report CXR_0013 shows dense consolidation in the right lower lobe and right middle lobe with air bronchograms, consistent with aspiration pneumonia. An enteric tube is present with the tip projecting over the stomach.",
+    "relevant_report_uids": ["CXR_0013"],
+    "category": "factual",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q19",
+    "question": "Which report describes post-thoracotomy findings?",
+    "ground_truth_answer": "Report CXR_0008 describes post-surgical changes of right thoracotomy with a right chest tube in place, small residual right pneumothorax, subcutaneous emphysema in the right chest wall, and small right pleural effusion.",
+    "relevant_report_uids": ["CXR_0008"],
+    "category": "factual",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q20",
+    "question": "What cardiothoracic ratio is reported for patient CXR_0018?",
+    "ground_truth_answer": "Report CXR_0018 shows a cardiothoracic ratio of approximately 0.55, indicating mild cardiomegaly with mild pulmonary vascular congestion.",
+    "relevant_report_uids": ["CXR_0018"],
+    "category": "factual",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q21",
+    "question": "Compare the pleural effusion findings across reports CXR_0002, CXR_0006, and CXR_0020.",
+    "ground_truth_answer": "CXR_0002 shows bilateral pleural effusions greater on the right than the left in the context of CHF. CXR_0006 shows a small right pleural effusion associated with a right hilar mass and mediastinal lymphadenopathy suspicious for lung malignancy. CXR_0020 shows a small right pleural effusion with a wedge-shaped peripheral opacity concerning for pulmonary infarction.",
+    "relevant_report_uids": ["CXR_0002", "CXR_0006", "CXR_0020"],
+    "category": "comparative",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q22",
+    "question": "Compare the two reports with suspected lung malignancy (CXR_0006 and CXR_0017).",
+    "ground_truth_answer": "CXR_0006 shows a large 5 cm right hilar mass with associated right upper lobe atelectasis and mediastinal lymphadenopathy, suggesting a more advanced presentation. CXR_0017 shows a smaller 2 cm spiculated mass in the left upper lobe with mild hilar prominence, in a patient with smoking history. Both recommend CT chest with contrast for further evaluation.",
+    "relevant_report_uids": ["CXR_0006", "CXR_0017"],
+    "category": "comparative",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q23",
+    "question": "Which reports show pneumothorax and how do they differ?",
+    "ground_truth_answer": "CXR_0003 shows a right apical pneumothorax with a visible visceral pleural line and absent lung markings peripherally. CXR_0008 shows a small residual right pneumothorax post-thoracotomy with a chest tube in place. CXR_0010 shows a small left-sided pneumothorax associated with rib fractures from trauma. The causes differ: CXR_0003 is likely spontaneous, CXR_0008 is post-surgical, and CXR_0010 is traumatic.",
+    "relevant_report_uids": ["CXR_0003", "CXR_0008", "CXR_0010"],
+    "category": "comparative",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q24",
+    "question": "Compare the cardiac findings in reports CXR_0002 and CXR_0018.",
+    "ground_truth_answer": "CXR_0002 shows an enlarged cardiac silhouette with cephalization of pulmonary vasculature, bilateral pleural effusions, and Kerley B lines consistent with congestive heart failure — a more severe presentation. CXR_0018 shows mild cardiomegaly with a cardiothoracic ratio of 0.55 and mild pulmonary vascular congestion but no pleural effusion, suggesting an earlier or less severe stage of cardiac disease.",
+    "relevant_report_uids": ["CXR_0002", "CXR_0018"],
+    "category": "comparative",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q25",
+    "question": "Which reports have normal chest X-ray findings?",
+    "ground_truth_answer": "Report CXR_0004 (pre-operative evaluation) shows no acute cardiopulmonary abnormality with clear lungs, normal cardiac silhouette, and normal mediastinal contours. Report CXR_0015 also has essentially normal findings apart from the expected presence of a right IJ central venous catheter.",
+    "relevant_report_uids": ["CXR_0004", "CXR_0015"],
+    "category": "comparative",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q26",
+    "question": "Compare the interstitial lung findings in reports CXR_0007 and CXR_0014.",
+    "ground_truth_answer": "CXR_0007 shows bilateral diffuse interstitial opacities with ground-glass opacities more prominent in the lower lobes, in the context of neutropenic fever, with differential including opportunistic infection or drug reaction. CXR_0014 shows reticular interstitial opacities with upper lobe predominant distribution and bilateral hilar lymphadenopathy, consistent with known sarcoidosis. The key differences are distribution (lower lobe vs upper lobe) and clinical context (acute infection vs chronic granulomatous disease).",
+    "relevant_report_uids": ["CXR_0007", "CXR_0014"],
+    "category": "comparative",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q27",
+    "question": "Which reports describe consolidation and what are the different etiologies?",
+    "ground_truth_answer": "CXR_0001 shows a patchy opacity in the right lower lobe (pneumonia from infection). CXR_0013 shows dense consolidation in the right lower and middle lobes with air bronchograms (aspiration pneumonia). CXR_0016 shows diffuse bilateral alveolar opacities with air bronchograms (ARDS). The consolidation patterns differ by distribution and clinical setting.",
+    "relevant_report_uids": ["CXR_0001", "CXR_0013", "CXR_0016"],
+    "category": "comparative",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q28",
+    "question": "How do the right upper lobe findings differ between CXR_0005, CXR_0006, and CXR_0011?",
+    "ground_truth_answer": "CXR_0005 shows a stable 1.2 cm solitary pulmonary nodule with surveillance recommended. CXR_0006 shows right upper lobe atelectasis secondary to a large 5 cm right hilar mass suspicious for malignancy. CXR_0011 shows a 3 cm cavitary lesion with tree-in-bud opacities suspicious for active tuberculosis. Each represents a different pathology: benign nodule, malignancy-related atelectasis, and infectious cavity.",
+    "relevant_report_uids": ["CXR_0005", "CXR_0006", "CXR_0011"],
+    "category": "comparative",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q29",
+    "question": "Compare the mediastinal findings across all reports.",
+    "ground_truth_answer": "CXR_0006 shows mediastinal lymphadenopathy associated with a right hilar mass. CXR_0012 shows widening of the mediastinum at the aortic arch level likely from a tortuous aorta. CXR_0014 shows bilateral symmetric hilar lymphadenopathy consistent with sarcoidosis. CXR_0010 specifically notes no mediastinal widening, ruling out aortic injury in the trauma setting. Most other reports describe an unremarkable mediastinum.",
+    "relevant_report_uids": ["CXR_0006", "CXR_0010", "CXR_0012", "CXR_0014"],
+    "category": "comparative",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q30",
+    "question": "Which reports recommend further imaging with CT and why?",
+    "ground_truth_answer": "CXR_0006 recommends CT chest with contrast for further evaluation of a right hilar mass suspicious for primary lung malignancy. CXR_0017 recommends CT chest with contrast for a spiculated left upper lobe mass suspicious for malignancy and for staging. CXR_0020 recommends CT pulmonary angiography to evaluate for pulmonary embolism given a wedge-shaped opacity concerning for pulmonary infarction.",
+    "relevant_report_uids": ["CXR_0006", "CXR_0017", "CXR_0020"],
+    "category": "comparative",
+    "difficulty": "medium"
+  },
+  {
+    "id": "q31",
+    "question": "A patient presents with acute onset dyspnea, pleuritic chest pain, and a wedge-shaped peripheral opacity on chest X-ray. Which report matches this presentation and what is the likely diagnosis?",
+    "ground_truth_answer": "Report CXR_0020 matches this presentation. The findings show a wedge-shaped opacity in the right lower lobe periphery with its base against the pleural surface and a small right pleural effusion. The likely diagnosis is pulmonary infarction secondary to pulmonary embolism. CT pulmonary angiography is recommended for confirmation.",
+    "relevant_report_uids": ["CXR_0020"],
+    "category": "diagnostic",
+    "difficulty": "hard"
+  },
+  {
+    "id": "q32",
+    "question": "A patient with a history of IV drug use presents with fever, neutropenia, and bilateral ground-glass opacities. Which report is most relevant and what are the differential diagnoses?",
+    "ground_truth_answer": "Report CXR_0007 is most relevant. It shows bilateral diffuse interstitial opacities with ground-glass opacities in the setting of neutropenic fever. A central venous catheter tip is in the superior vena cava. The differential diagnoses include opportunistic infection such as PCP or fungal infection versus drug reaction.",
+    "relevant_report_uids": ["CXR_0007"],
+    "category": "diagnostic",
+    "difficulty": "hard"
+  },
+  {
+    "id": "q33",
+    "question": "A long-term smoker presents with chronic cough, weight loss, and a spiculated lung mass. Which report matches and what follow-up is recommended?",
+    "ground_truth_answer": "Report CXR_0017 matches this presentation. It shows a 2 cm spiculated mass in the left upper lobe with mild left hilar prominence that may represent lymphadenopathy. The impression is suspicious for malignancy given the smoking history. CT chest with contrast is recommended for further evaluation and staging.",
+    "relevant_report_uids": ["CXR_0017"],
+    "category": "diagnostic",
+    "difficulty": "hard"
+  },
+  {
+    "id": "q34",
+    "question": "A patient from an endemic area presents with chronic cough, night sweats, and an upper lobe cavitary lesion. Which report matches and what testing is recommended?",
+    "ground_truth_answer": "Report CXR_0011 matches this presentation. It shows a right upper lobe cavitary lesion measuring approximately 3 cm with surrounding tree-in-bud opacities and patchy opacities in the right middle lobe, highly suspicious for active pulmonary tuberculosis. Calcified right hilar granulomas suggest prior granulomatous disease. Sputum AFB testing is recommended.",
+    "relevant_report_uids": ["CXR_0011"],
+    "category": "diagnostic",
+    "difficulty": "hard"
+  },
+  {
+    "id": "q35",
+    "question": "A patient involved in a motor vehicle accident presents with left-sided chest pain and difficulty breathing. Which report is relevant and what injuries were found?",
+    "ground_truth_answer": "Report CXR_0010 is relevant. The findings show fractures involving the left 4th, 5th, and 6th ribs laterally with associated small left hemothorax and left-sided pneumothorax. No mediastinal widening was seen to suggest aortic injury and no vertebral body fracture was identified.",
+    "relevant_report_uids": ["CXR_0010"],
+    "category": "diagnostic",
+    "difficulty": "hard"
+  },
+  {
+    "id": "q36",
+    "question": "What types of tubes and lines are documented across the reports?",
+    "ground_truth_answer": "CXR_0007 documents a central venous catheter with tip in the superior vena cava. CXR_0008 has a right chest tube in place. CXR_0013 has an enteric tube with tip projecting over the stomach. CXR_0015 has a right internal jugular central venous catheter with tip at the cavoatrial junction. CXR_0016 has an endotracheal tube with tip 4 cm above the carina. CXR_0019 has an endotracheal tube (3 cm above carina), a nasogastric tube (tip below diaphragm), and a right IJ central line (tip in SVC).",
+    "relevant_report_uids": ["CXR_0007", "CXR_0008", "CXR_0013", "CXR_0015", "CXR_0016", "CXR_0019"],
+    "category": "procedural",
+    "difficulty": "easy"
+  },
+  {
+    "id": "q37",
+    "question": "Where is the endotracheal tube tip positioned in report CXR_0016?",
+    "ground_truth_answer": "In report CXR_0016, the endotracheal tube tip is positioned 4 cm above the carina, which is described as appropriately positioned.",
+    "relevant_report_uids": ["CXR_0016"],
+    "category": "procedural",
+    "difficulty": "easy"
+  },
+  {
+    "id": "q38",
+    "question": "Describe all the lines and tubes in report CXR_0019 and their positions.",
+    "ground_truth_answer": "Report CXR_0019 shows three devices: (1) an endotracheal tube with tip approximately 3 cm above the carina in satisfactory position, (2) a nasogastric tube with tip projecting below the diaphragm, and (3) a right IJ central line with tip in the SVC. All are in satisfactory position.",
+    "relevant_report_uids": ["CXR_0019"],
+    "category": "procedural",
+    "difficulty": "easy"
+  },
+  {
+    "id": "q39",
+    "question": "Where is the central venous catheter tip in report CXR_0015?",
+    "ground_truth_answer": "In report CXR_0015, the right internal jugular central venous catheter tip is projecting over the cavoatrial junction. No pneumothorax was noted post-placement.",
+    "relevant_report_uids": ["CXR_0015"],
+    "category": "procedural",
+    "difficulty": "easy"
+  },
+  {
+    "id": "q40",
+    "question": "Is there a chest tube mentioned in the reports and what is its status?",
+    "ground_truth_answer": "Yes, report CXR_0008 describes a right chest tube in place following right thoracotomy. There is a small residual right pneumothorax with the chest tube in situ, along with subcutaneous emphysema in the right chest wall.",
+    "relevant_report_uids": ["CXR_0008"],
+    "category": "procedural",
+    "difficulty": "easy"
+  }
+]

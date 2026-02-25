@@ -82,6 +82,82 @@ def context_recall(
     )
 
 
+def reciprocal_rank(
+    retrieved_uids: list[str],
+    relevant_uids: list[str],
+) -> MetricResult:
+    """
+    Reciprocal Rank: 1 / (position of first relevant doc).
+
+    MRR is the mean of this across all queries.
+    """
+    if not relevant_uids:
+        return MetricResult(
+            name="reciprocal_rank",
+            score=0.0,
+            explanation="No relevant documents specified.",
+        )
+
+    relevant_set = set(relevant_uids)
+    for rank, uid in enumerate(retrieved_uids, start=1):
+        if uid in relevant_set:
+            return MetricResult(
+                name="reciprocal_rank",
+                score=round(1.0 / rank, 4),
+                explanation=f"First relevant doc at rank {rank}.",
+            )
+
+    return MetricResult(
+        name="reciprocal_rank",
+        score=0.0,
+        explanation="No relevant doc found in retrieved results.",
+    )
+
+
+def ndcg_at_k(
+    retrieved_uids: list[str],
+    relevant_uids: list[str],
+) -> MetricResult:
+    """
+    Normalized Discounted Cumulative Gain @ K.
+
+    Uses binary relevance (1 if relevant, 0 otherwise).
+    K is determined by len(retrieved_uids).
+    """
+    import math
+
+    if not relevant_uids:
+        return MetricResult(
+            name="ndcg",
+            score=0.0,
+            explanation="No relevant documents specified.",
+        )
+
+    relevant_set = set(relevant_uids)
+    k = len(retrieved_uids)
+
+    # DCG: sum of rel_i / log2(i+1) for i=1..k
+    dcg = 0.0
+    for i, uid in enumerate(retrieved_uids):
+        rel = 1.0 if uid in relevant_set else 0.0
+        dcg += rel / math.log2(i + 2)  # i+2 because i is 0-indexed
+
+    # Ideal DCG: best possible ranking
+    num_relevant = min(len(relevant_set), k)
+    idcg = sum(1.0 / math.log2(i + 2) for i in range(num_relevant))
+
+    if idcg == 0:
+        score = 0.0
+    else:
+        score = dcg / idcg
+
+    return MetricResult(
+        name="ndcg",
+        score=round(score, 4),
+        explanation=f"DCG={dcg:.4f}, IDCG={idcg:.4f}, k={k}.",
+    )
+
+
 def faithfulness(
     question: str,
     answer: str,

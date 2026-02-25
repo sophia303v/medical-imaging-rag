@@ -238,7 +238,7 @@ def fig_ingestion_pipeline():
 
     # ── Detail items ──
     details = [
-        ["sample_reports.json", "OpenI dataset (HF)", "reports_cache.json"],
+        ["openi_synthetic/reports.json", "OpenI dataset (HF)", "Auto-download"],
         ["Parse JSON fields", "Filter empty reports", "MedicalReport dataclass"],
         ["indication", "findings", "impression", "full_text"],
         ["TF-IDF to 768-dim", "Gemini text-embedding-004", "Batch size: 100"],

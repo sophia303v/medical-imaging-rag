@@ -1,7 +1,14 @@
 .env
 data/chroma_db/
 data/raw/
-data/reports_cache.json
+data/squad_v2/
+data/scifact/
+data/radqa/
+data/eval_results.json
+data/eval_report.html
+# Large benchmark eval results (2000 questions)
+experiments/2026-02-25_squad_v2_baseline/eval_results.json
+experiments/2026-02-25_squad_v2_topk1/eval_results.json
 __pycache__/
 *.pyc
 .DS_Store

@@ -242,6 +242,26 @@ python run_eval.py --quiet
 - `data/eval_results.json` — 原始分數（所有 40 題的逐題分數 + 彙總統計）
 - `data/eval_report.html` — 互動式圖表報告（用瀏覽器開）
 
+**4. 比較不同實驗**
+
+```bash
+# 比較兩組實驗
+python compare_experiments.py experiments/2026-02-20_baseline experiments/2026-02-23_topk5
+
+# 自訂顯示名稱
+python compare_experiments.py exp1/ exp2/ --names "Baseline" "TOP_K=5"
+
+# 指定輸出路徑
+python compare_experiments.py exp1/ exp2/ exp3/ -o experiments/my_comparison.html
+```
+
+比較報告包含：
+- **設定差異表** — 自動找出不同實驗間的設定差異
+- **雷達圖疊加** — 所有實驗的 7 項指標在同一張圖上對比
+- **分組長條圖** — 每個指標各實驗並排比較
+- **分類比較** — 按題目類別的 precision/recall 對比
+- **逐題 Delta 表** — 最大改進和退步一目瞭然（按 delta 大小排序）
+
 ---
 
 ## 評估系統
@@ -327,6 +347,7 @@ medical-imaging-rag/
 ├── app.py                    # Gradio web 介面
 ├── ingest.py                 # 資料索引 CLI
 ├── run_eval.py               # 評估 CLI
+├── compare_experiments.py    # 跨實驗比較 CLI
 ├── config.py                 # 集中設定
 ├── requirements.txt          # Python 依賴
 ├── .env.example              # 環境變數範本

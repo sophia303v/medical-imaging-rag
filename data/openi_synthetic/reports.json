@@ -1,0 +1,142 @@
+[
+  {
+    "uid": "CXR_0001",
+    "indication": "Cough and fever for 3 days.",
+    "findings": "The heart size is normal. The mediastinum is unremarkable. There is a patchy opacity in the right lower lobe consistent with airspace disease. No pleural effusion. No pneumothorax. The osseous structures are intact.",
+    "impression": "Right lower lobe pneumonia.",
+    "image_paths": []
+  },
+  {
+    "uid": "CXR_0002",
+    "indication": "Shortness of breath, rule out CHF.",
+    "findings": "The cardiac silhouette is enlarged. There is cephalization of the pulmonary vasculature. Bilateral pleural effusions are noted, greater on the right than the left. Kerley B lines are present. No focal consolidation. No pneumothorax.",
+    "impression": "Cardiomegaly with findings consistent with congestive heart failure. Bilateral pleural effusions.",
+    "image_paths": []
+  },
+  {
+    "uid": "CXR_0003",
+    "indication": "Chest pain, rule out pneumothorax.",
+    "findings": "There is a visible visceral pleural line along the right apex with absence of lung markings peripheral to this line, consistent with a right-sided pneumothorax. The left lung is clear. Heart size is normal. No pleural effusion on the left.",
+    "impression": "Right apical pneumothorax.",
+    "image_paths": []
+  },
+  {
+    "uid": "CXR_0004",
+    "indication": "Pre-operative evaluation.",
+    "findings": "The lungs are clear bilaterally. No focal consolidation, pleural effusion, or pneumothorax. The cardiac silhouette is normal in size. The mediastinal contours are normal. The visualized osseous structures show no acute abnormality.",
+    "impression": "No acute cardiopulmonary abnormality.",
+    "image_paths": []
+  },
+  {
+    "uid": "CXR_0005",
+    "indication": "Follow-up lung nodule.",
+    "findings": "There is a 1.2 cm solitary pulmonary nodule in the right upper lobe, unchanged compared to prior examination dated 6 months ago. No new nodules are identified. The lungs are otherwise clear. Heart size is normal. No pleural effusion.",
+    "impression": "Stable 1.2 cm right upper lobe pulmonary nodule. Recommend continued surveillance per Fleischner Society guidelines.",
+    "image_paths": []
+  },
+  {
+    "uid": "CXR_0006",
+    "indication": "Dyspnea and weight loss.",
+    "findings": "There is a large right hilar mass measuring approximately 5 cm. Associated right upper lobe atelectasis is noted. Mediastinal lymphadenopathy is present. Small right pleural effusion. The left lung is clear. Osseous structures show no lytic lesions.",
+    "impression": "Right hilar mass with associated atelectasis and mediastinal lymphadenopathy, suspicious for primary lung malignancy. Right pleural effusion. Recommend CT chest with contrast for further evaluation.",
+    "image_paths": []
+  },
+  {
+    "uid": "CXR_0007",
+    "indication": "Fever, neutropenia.",
+    "findings": "Bilateral diffuse interstitial opacities are present, more prominent in the lower lobes. Ground-glass opacities noted bilaterally. No pleural effusion. Heart size is normal. Central venous catheter tip is in the superior vena cava.",
+    "impression": "Bilateral interstitial and ground-glass opacities in the setting of neutropenic fever, differential includes opportunistic infection (PCP, fungal) versus drug reaction. Clinical correlation recommended.",
+    "image_paths": []
+  },
+  {
+    "uid": "CXR_0008",
+    "indication": "Status post right thoracotomy.",
+    "findings": "Post-surgical changes of right thoracotomy are noted. There is a right chest tube in place with a small residual right pneumothorax. Subcutaneous emphysema is present in the right chest wall. Small right pleural effusion. Left lung is clear.",
+    "impression": "Expected post-surgical changes. Small residual right pneumothorax with chest tube in place. Subcutaneous emphysema.",
+    "image_paths": []
+  },
+  {
+    "uid": "CXR_0009",
+    "indication": "COPD exacerbation.",
+    "findings": "The lungs are hyperinflated with flattening of the diaphragms, consistent with chronic obstructive pulmonary disease. There is peribronchial thickening. No focal consolidation. No pleural effusion. The cardiac silhouette appears small relative to the hyperinflated lungs.",
+    "impression": "Hyperinflated lungs consistent with COPD. No acute superimposed process.",
+    "image_paths": []
+  },
+  {
+    "uid": "CXR_0010",
+    "indication": "Trauma, motor vehicle accident.",
+    "findings": "There are fractures involving the left 4th, 5th, and 6th ribs laterally. A small left hemothorax is present. There is a small left-sided pneumothorax. No mediastinal widening. The right lung is clear. No vertebral body fracture identified.",
+    "impression": "Left 4th-6th rib fractures with associated small hemothorax and pneumothorax. No mediastinal widening to suggest aortic injury.",
+    "image_paths": []
+  },
+  {
+    "uid": "CXR_0011",
+    "indication": "Tuberculosis screening.",
+    "findings": "There is a cavitary lesion in the right upper lobe measuring approximately 3 cm. Surrounding tree-in-bud opacities are noted. Patchy opacities in the right middle lobe. No pleural effusion. The left lung is clear. Calcified granulomas are noted in the right hilum.",
+    "impression": "Right upper lobe cavitary lesion with tree-in-bud opacities, highly suspicious for active pulmonary tuberculosis. Calcified right hilar granulomas suggesting prior granulomatous disease. Recommend sputum AFB testing.",
+    "image_paths": []
+  },
+  {
+    "uid": "CXR_0012",
+    "indication": "Difficulty swallowing.",
+    "findings": "The lungs are clear. Heart size is within normal limits. There is widening of the mediastinum at the level of the aortic arch. A retrocardiac soft tissue density is noted which may represent a hiatal hernia. The osseous structures are unremarkable.",
+    "impression": "Possible hiatal hernia. Mediastinal widening at the aortic arch level, likely tortuous aorta in the clinical setting, but CT may be considered if clinical concern for other pathology.",
+    "image_paths": []
+  },
+  {
+    "uid": "CXR_0013",
+    "indication": "Productive cough, rule out aspiration.",
+    "findings": "There is dense consolidation in the right lower lobe and right middle lobe with air bronchograms. The right upper lobe is clear. Left lung is clear. Heart size is normal. No pleural effusion. An enteric tube is present with the tip projecting over the stomach.",
+    "impression": "Right lower lobe and middle lobe consolidation, consistent with aspiration pneumonia in the appropriate clinical setting. Enteric tube tip in the stomach.",
+    "image_paths": []
+  },
+  {
+    "uid": "CXR_0014",
+    "indication": "Sarcoidosis follow-up.",
+    "findings": "Bilateral symmetric hilar lymphadenopathy is present, unchanged from prior. Reticular interstitial opacities are noted in both upper lobes. No pleural effusion. Heart size is normal. Upper lobe predominant distribution of interstitial changes.",
+    "impression": "Bilateral hilar lymphadenopathy with upper lobe predominant interstitial disease, consistent with known sarcoidosis. Stable compared to prior examination.",
+    "image_paths": []
+  },
+  {
+    "uid": "CXR_0015",
+    "indication": "Line placement confirmation.",
+    "findings": "A right internal jugular central venous catheter is present with the tip projecting over the cavoatrial junction. No pneumothorax. The lungs are clear bilaterally. Heart size is normal. No pleural effusion.",
+    "impression": "Right IJ central venous catheter with tip at the cavoatrial junction. No pneumothorax. No acute cardiopulmonary process.",
+    "image_paths": []
+  },
+  {
+    "uid": "CXR_0016",
+    "indication": "Acute respiratory distress.",
+    "findings": "There are diffuse bilateral alveolar opacities involving all lung zones. Air bronchograms are present bilaterally. The cardiac silhouette is difficult to assess due to the extensive parenchymal disease. No obvious pleural effusion. Endotracheal tube is present with tip 4 cm above the carina.",
+    "impression": "Diffuse bilateral alveolar opacities consistent with ARDS in the appropriate clinical setting. Appropriately positioned endotracheal tube.",
+    "image_paths": []
+  },
+  {
+    "uid": "CXR_0017",
+    "indication": "Chronic cough, smoker.",
+    "findings": "There is a 2 cm spiculated mass in the left upper lobe. Mild left hilar prominence is noted. The right lung is clear. No pleural effusion. Heart size is normal. Degenerative changes of the thoracic spine are present.",
+    "impression": "Spiculated left upper lobe mass suspicious for malignancy in a patient with smoking history. Left hilar prominence may represent lymphadenopathy. CT chest with contrast recommended for further evaluation and staging.",
+    "image_paths": []
+  },
+  {
+    "uid": "CXR_0018",
+    "indication": "Palpitations, rule out cardiomegaly.",
+    "findings": "The cardiac silhouette is mildly enlarged with a cardiothoracic ratio of approximately 0.55. There is mild pulmonary vascular congestion. No pleural effusion. The lungs are otherwise clear. No focal consolidation.",
+    "impression": "Mild cardiomegaly with mild pulmonary vascular congestion. No acute pulmonary disease.",
+    "image_paths": []
+  },
+  {
+    "uid": "CXR_0019",
+    "indication": "Post-intubation check.",
+    "findings": "Endotracheal tube is present with tip approximately 3 cm above the carina, in satisfactory position. A nasogastric tube is present with the tip projecting below the diaphragm. Right IJ central line with tip in the SVC. Bilateral basilar atelectasis. No pneumothorax.",
+    "impression": "Satisfactory positioning of endotracheal tube, nasogastric tube, and right IJ central line. Bilateral basilar atelectasis.",
+    "image_paths": []
+  },
+  {
+    "uid": "CXR_0020",
+    "indication": "Pleuritic chest pain.",
+    "findings": "There is a wedge-shaped opacity in the right lower lobe periphery with its base against the pleural surface. A small right pleural effusion is present. The left lung is clear. Heart size is normal. No pneumothorax.",
+    "impression": "Wedge-shaped peripheral right lower lobe opacity with small pleural effusion, concerning for pulmonary infarction in the setting of pleuritic chest pain. CT pulmonary angiography recommended to evaluate for pulmonary embolism.",
+    "image_paths": []
+  }
+]

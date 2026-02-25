@@ -6,15 +6,24 @@ Produces an EvaluationReport with per-question and aggregate scores.
 import json
 import re
 import time
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from dataclasses import dataclass, field
 from pathlib import Path
 
+from tqdm import tqdm
+
 import config
 from src.rag_pipeline import MedicalImagingRAG
+from src.embedding import embed_texts
+from src.vector_store import get_chroma_client, get_or_create_collection
+from src.retriever import RetrievalResult
+from src.generator import generate_answer
 from src.evaluation.metrics import (
     MetricResult,
     context_precision,
     context_recall,
+    reciprocal_rank,
+    ndcg_at_k,
     faithfulness,
     answer_relevancy,
 )
@@ -35,6 +44,8 @@ class QuestionResult:
     # RAGAS metrics
     context_precision: float
     context_recall: float
+    reciprocal_rank: float
+    ndcg: float
     faithfulness: float
     answer_relevancy: float
     # LLM judge metrics
@@ -55,6 +66,8 @@ class QuestionResult:
             "scores": {
                 "context_precision": self.context_precision,
                 "context_recall": self.context_recall,
+                "reciprocal_rank": self.reciprocal_rank,
+                "ndcg": self.ndcg,
                 "faithfulness": self.faithfulness,
                 "answer_relevancy": self.answer_relevancy,
                 "medical_appropriateness": self.medical_appropriateness,
@@ -73,8 +86,8 @@ class EvaluationReport:
     def aggregate_scores(self) -> dict[str, dict[str, float]]:
         """Compute mean, min, max for each metric across all questions."""
         metric_names = [
-            "context_precision", "context_recall", "faithfulness",
-            "answer_relevancy", "medical_appropriateness",
+            "context_precision", "context_recall", "reciprocal_rank", "ndcg",
+            "faithfulness", "answer_relevancy", "medical_appropriateness",
             "citation_accuracy", "answer_completeness",
         ]
         agg = {}
@@ -101,8 +114,8 @@ class EvaluationReport:
             categories.setdefault(r.category, []).append(r)
 
         metric_names = [
-            "context_precision", "context_recall", "faithfulness",
-            "answer_relevancy", "medical_appropriateness",
+            "context_precision", "context_recall", "reciprocal_rank", "ndcg",
+            "faithfulness", "answer_relevancy", "medical_appropriateness",
             "citation_accuracy", "answer_completeness",
         ]
         result = {}
@@ -147,6 +160,7 @@ def run_evaluation(
     golden_qa_path: Path | None = None,
     use_llm_metrics: bool = True,
     verbose: bool = True,
+    max_samples: int | None = None,
 ) -> EvaluationReport:
     """
     Run full evaluation on the golden QA dataset.
@@ -157,15 +171,21 @@ def run_evaluation(
                          answer_relevancy, LLM judge). Set False to only
                          run retrieval metrics without an API key.
         verbose: Print progress
+        max_samples: Limit to first N questions (None = all)
 
     Returns:
         EvaluationReport with all results
     """
     if golden_qa_path is None:
-        golden_qa_path = config.DATA_DIR / "golden_qa.json"
+        golden_qa_path = config.GOLDEN_QA_PATH
 
     with open(golden_qa_path) as f:
         qa_pairs = json.load(f)
+
+    if max_samples is not None:
+        qa_pairs = qa_pairs[:max_samples]
+        if verbose:
+            print(f"Limited to first {max_samples} questions.")
 
     if verbose:
         print(f"Loaded {len(qa_pairs)} QA pairs from {golden_qa_path}")
@@ -180,27 +200,50 @@ def run_evaluation(
     report = EvaluationReport()
     start_time = time.time()
 
-    for i, qa in enumerate(qa_pairs):
+    # --- Batch embed all queries upfront for speed ---
+    all_questions = [qa["question"] for qa in qa_pairs]
+    if verbose:
+        print("Batch embedding all queries...")
+    all_embeddings = embed_texts(all_questions, task_type="RETRIEVAL_QUERY")
+    if verbose:
+        print(f"Embedded {len(all_embeddings)} queries.")
+
+    # Get ChromaDB collection once
+    client = get_chroma_client()
+    collection = get_or_create_collection(client)
+
+    pbar = tqdm(qa_pairs, desc="Evaluating", disable=not verbose)
+    for i, qa in enumerate(pbar):
         qid = qa["id"]
         question = qa["question"]
         ground_truth = qa["ground_truth_answer"]
-        relevant_uids = qa["relevant_report_uids"]
-        category = qa["category"]
-        difficulty = qa["difficulty"]
+        relevant_uids = qa.get("relevant_report_uids", [])
+        category = qa.get("category", "unknown")
+        difficulty = qa.get("difficulty", "unknown")
 
-        if verbose:
-            print(f"\n[{i+1}/{len(qa_pairs)}] {qid}: {question[:60]}...")
+        pbar.set_postfix_str(f"{qid}: {question[:40]}")
 
-        # Run RAG query
+        # Retrieve using pre-computed embedding
         try:
-            gen_result = rag.query(question)
-            answer = gen_result.answer
-            retrieval = gen_result.retrieval
-            retrieved_uids = _extract_uids(retrieval.metadatas)
-            context_text = retrieval.context
+            results = collection.query(
+                query_embeddings=[all_embeddings[i]],
+                n_results=config.TOP_K,
+                include=["documents", "metadatas", "distances"],
+            )
+            documents = results["documents"][0] if results["documents"] else []
+            metadatas = results["metadatas"][0] if results["metadatas"] else []
+            retrieved_uids = _extract_uids(metadatas)
+
+            # Build context string
+            context_parts = []
+            for j, (doc, meta) in enumerate(zip(documents, metadatas)):
+                source = f"Report {meta.get('uid', 'unknown')} ({meta.get('section', 'unknown')})"
+                context_parts.append(f"[Source {j+1}: {source}]\n{doc}")
+            context_text = "\n\n".join(context_parts)
+            answer = ""  # retrieval-only doesn't need generation
         except Exception as e:
             if verbose:
-                print(f"  Query failed: {e}")
+                tqdm.write(f"  Query failed: {e}")
             answer = f"[Query failed: {e}]"
             retrieved_uids = []
             context_text = ""
@@ -208,9 +251,8 @@ def run_evaluation(
         # --- Retrieval metrics (always run) ---
         cp = context_precision(retrieved_uids, relevant_uids)
         cr = context_recall(retrieved_uids, relevant_uids)
-
-        if verbose:
-            print(f"  Context Precision: {cp.score:.2f}  Recall: {cr.score:.2f}")
+        rr = reciprocal_rank(retrieved_uids, relevant_uids)
+        ndcg = ndcg_at_k(retrieved_uids, relevant_uids)
 
         # --- LLM metrics (optional) ---
         faith_score = -1.0
@@ -220,20 +262,35 @@ def run_evaluation(
         completeness = -1.0
 
         if use_llm_metrics:
-            faith = faithfulness(question, answer, context_text)
+            # Generate answer using already-retrieved context (no re-embedding)
+            try:
+                retrieval = RetrievalResult(
+                    query=question,
+                    image_description=None,
+                    documents=documents,
+                    metadatas=metadatas,
+                    distances=[],
+                )
+                gen_result = generate_answer(retrieval)
+                answer = gen_result.answer
+            except Exception as e:
+                answer = f"[Generation failed: {e}]"
+
+            # Run faithfulness, relevancy, and judge concurrently
+            with ThreadPoolExecutor(max_workers=3) as pool:
+                f_faith = pool.submit(faithfulness, question, answer, context_text)
+                f_rel = pool.submit(answer_relevancy, question, answer)
+                f_judge = pool.submit(judge_answer, question, answer, ground_truth, context_text)
+
+                faith = f_faith.result()
+                relevancy = f_rel.result()
+                judge = f_judge.result()
+
             faith_score = faith.score
-
-            relevancy = answer_relevancy(question, answer)
             relevancy_score = relevancy.score
-
-            judge = judge_answer(question, answer, ground_truth, context_text)
             med_approp = judge.medical_appropriateness
             cite_acc = judge.citation_accuracy
             completeness = judge.answer_completeness
-
-            if verbose:
-                print(f"  Faithfulness: {faith_score:.2f}  Relevancy: {relevancy_score:.2f}")
-                print(f"  Medical: {med_approp:.2f}  Citation: {cite_acc:.2f}  Completeness: {completeness:.2f}")
 
         result = QuestionResult(
             question_id=qid,
@@ -246,6 +303,8 @@ def run_evaluation(
             relevant_uids=relevant_uids,
             context_precision=cp.score,
             context_recall=cr.score,
+            reciprocal_rank=rr.score,
+            ndcg=ndcg.score,
             faithfulness=faith_score,
             answer_relevancy=relevancy_score,
             medical_appropriateness=med_approp,

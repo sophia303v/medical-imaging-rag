@@ -44,21 +44,20 @@ class MedicalImagingRAG:
         Args:
             max_samples: Number of reports to load from the dataset
         """
-        cache_path = config.DATA_DIR / "reports_cache.json"
+        reports_path = config.DATASET_DIR / "reports.json"
+        if not reports_path.exists():
+            # Fallback for benchmark datasets that use passages.json
+            passages_path = config.DATASET_DIR / "passages.json"
+            if passages_path.exists():
+                reports_path = passages_path
 
-        # Try loading from cache first
-        if cache_path.exists():
-            print("Loading reports from cache...")
-            reports = load_reports_from_json(cache_path)
+        if reports_path.exists():
+            print(f"Loading reports from {reports_path} ...")
+            reports = load_reports_from_json(reports_path)
         else:
-            # Try local sample data first, then HuggingFace
-            sample_path = config.DATA_DIR / "sample_reports.json"
-            if sample_path.exists():
-                print("Loading from local sample data...")
-                reports = load_reports_from_json(sample_path)
-            else:
-                reports = load_openi_from_huggingface(max_samples=max_samples)
-            save_reports_to_json(reports, cache_path)
+            reports = load_openi_from_huggingface(max_samples=max_samples)
+            reports_path.parent.mkdir(parents=True, exist_ok=True)
+            save_reports_to_json(reports, reports_path)
 
         # Chunk reports
         chunks = chunk_reports(reports)

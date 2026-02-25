@@ -10,6 +10,10 @@ Usage:
     python run_eval.py --config experiments/configs/example_topk5.yaml --retrieval-only
     python run_eval.py --top-k 5 --experiment-name topk5_test --retrieval-only
     python run_eval.py --config experiments/configs/topk5.yaml --top-k 7  # CLI overrides YAML
+
+    # Benchmark datasets:
+    python run_eval.py --dataset squad_v2 --retrieval-only
+    python run_eval.py --dataset scifact --retrieval-only --experiment-name scifact_baseline
 """
 import argparse
 import json
@@ -100,6 +104,15 @@ def main():
         choices=["gemini", "ollama"],
         help="Override GENERATION_BACKEND",
     )
+    parser.add_argument(
+        "--dataset", type=str, default=None,
+        help="Dataset name to evaluate (e.g. squad_v2, scifact, radqa). "
+             "Note: switching datasets requires rebuilding chroma_db first.",
+    )
+    parser.add_argument(
+        "--max-samples", type=int, default=None,
+        help="Limit evaluation to first N questions (useful for quick tests)",
+    )
     args = parser.parse_args()
 
     # --- Apply overrides in priority order: YAML < CLI ---
@@ -121,6 +134,15 @@ def main():
     if args.generation_backend is not None:
         config.GENERATION_BACKEND = args.generation_backend
         cli_overrides["GENERATION_BACKEND"] = args.generation_backend
+
+    if args.dataset is not None:
+        config.set_dataset(args.dataset)
+        cli_overrides["DATASET_NAME"] = args.dataset
+        if not args.quiet:
+            print(f"Dataset: {args.dataset} ({config.DATASET_DIR})")
+            if not config.DATASET_DIR.exists():
+                print(f"  Warning: {config.DATASET_DIR} does not exist yet. "
+                      f"Run: python scripts/download_datasets.py {args.dataset}")
 
     if cli_overrides and not args.quiet:
         print("CLI overrides:")
@@ -159,6 +181,7 @@ def main():
         golden_qa_path=qa_path,
         use_llm_metrics=use_llm,
         verbose=not args.quiet,
+        max_samples=args.max_samples,
     )
 
     # Save results

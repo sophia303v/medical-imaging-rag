@@ -11,6 +11,8 @@ load_dotenv()
 PROJECT_ROOT = Path(__file__).parent
 DATA_DIR = PROJECT_ROOT / "data"
 RAW_DATA_DIR = DATA_DIR / "raw"
+DATASET_NAME = os.getenv("DATASET_NAME", "openi_synthetic")
+DATASET_DIR = DATA_DIR / DATASET_NAME
 CHROMA_DIR = DATA_DIR / "chroma_db"
 MODELS_DIR = Path("/Users/sophia/Desktop/CV/models")
 EXPERIMENTS_DIR = PROJECT_ROOT / "experiments"
@@ -43,7 +45,7 @@ COLLECTION_NAME = "medical_reports"
 EMBEDDING_DIMENSION = 384  # all-MiniLM-L12-v2 output dimension
 
 # Evaluation
-GOLDEN_QA_PATH = DATA_DIR / "golden_qa.json"
+GOLDEN_QA_PATH = DATASET_DIR / "golden_qa.json"
 EVAL_RESULTS_PATH = DATA_DIR / "eval_results.json"
 EVAL_REPORT_PATH = DATA_DIR / "eval_report.html"
 
@@ -65,7 +67,16 @@ EXPERIMENT_PARAMS = [
     "TOP_K",
     "COLLECTION_NAME",
     "EMBEDDING_DIMENSION",
+    "DATASET_NAME",
 ]
+
+
+def set_dataset(name: str):
+    """Switch active dataset and update derived paths."""
+    this_module = sys.modules[__name__]
+    this_module.DATASET_NAME = name
+    this_module.DATASET_DIR = DATA_DIR / name
+    this_module.GOLDEN_QA_PATH = this_module.DATASET_DIR / "golden_qa.json"
 
 
 def load_yaml_config(yaml_path: str | Path) -> dict:
@@ -91,6 +102,11 @@ def load_yaml_config(yaml_path: str | Path) -> dict:
         if key_upper in EXPERIMENT_PARAMS:
             setattr(this_module, key_upper, value)
             applied[key_upper] = value
+
+    # If DATASET_NAME was overridden, update derived paths
+    if "DATASET_NAME" in applied:
+        set_dataset(applied["DATASET_NAME"])
+
     return applied
 
 
