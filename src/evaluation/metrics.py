@@ -1,5 +1,5 @@
 """
-RAGAS-style evaluation metrics for the Medical Imaging RAG system.
+RAGAS-style evaluation metrics for the RAG system.
 
 Implements 4 metrics:
 - Context Precision: % of retrieved docs that are relevant (pure computation)
@@ -14,6 +14,7 @@ import re
 import requests
 
 import config
+from src.prompt_loader import get as get_prompt
 
 
 @dataclass
@@ -169,36 +170,11 @@ def faithfulness(
     Uses Gemini to check whether each claim in the answer can be
     attributed to the provided context.
     """
-    prompt = f"""You are an evaluation judge for a medical RAG system.
-
-Given the CONTEXT (retrieved documents), QUESTION, and ANSWER below,
-evaluate whether the ANSWER is faithful to the CONTEXT.
-
-An answer is faithful if every factual claim it makes can be traced back
-to information in the context. The answer should not hallucinate facts
-that are not in the context.
-
-CONTEXT:
-{context}
-
-QUESTION:
-{question}
-
-ANSWER:
-{answer}
-
-Respond in JSON format:
-{{
-  "score": <float between 0.0 and 1.0>,
-  "explanation": "<brief explanation of your score>"
-}}
-
-Scoring guide:
-- 1.0: Every claim in the answer is supported by the context
-- 0.7-0.9: Most claims are supported, minor unsupported details
-- 0.4-0.6: Mix of supported and unsupported claims
-- 0.1-0.3: Mostly unsupported claims
-- 0.0: Answer contradicts the context or is entirely fabricated"""
+    prompt = get_prompt("faithfulness_prompt").format(
+        context=context,
+        question=question,
+        answer=answer,
+    )
 
     return _call_llm_metric("faithfulness", prompt)
 
@@ -213,32 +189,10 @@ def answer_relevancy(
     Uses Gemini to evaluate whether the answer is on-topic and
     responsive to what was asked.
     """
-    prompt = f"""You are an evaluation judge for a medical RAG system.
-
-Given the QUESTION and ANSWER below, evaluate whether the ANSWER
-is relevant to the QUESTION.
-
-A relevant answer directly addresses what was asked, stays on topic,
-and provides the type of information the question is seeking.
-
-QUESTION:
-{question}
-
-ANSWER:
-{answer}
-
-Respond in JSON format:
-{{
-  "score": <float between 0.0 and 1.0>,
-  "explanation": "<brief explanation of your score>"
-}}
-
-Scoring guide:
-- 1.0: Answer directly and completely addresses the question
-- 0.7-0.9: Answer mostly addresses the question with minor tangents
-- 0.4-0.6: Answer partially addresses the question
-- 0.1-0.3: Answer is mostly off-topic
-- 0.0: Answer is completely irrelevant to the question"""
+    prompt = get_prompt("answer_relevancy_prompt").format(
+        question=question,
+        answer=answer,
+    )
 
     return _call_llm_metric("answer_relevancy", prompt)
 

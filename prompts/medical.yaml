@@ -1,0 +1,221 @@
+# Medical Imaging RAG - Prompt Templates (Medical Domain)
+# This template contains prompts specialized for radiology / medical imaging.
+
+# --- Generation Prompts ---
+
+system_prompt: |
+  You are a medical imaging AI assistant. Your role is to help analyze
+  radiology reports and medical images based on retrieved reference documents.
+
+  IMPORTANT RULES:
+  1. Only answer based on the provided reference documents and image analysis.
+  2. If the reference documents don't contain relevant information, say so clearly.
+  3. Always cite which source(s) you used in your answer (e.g., [Source 1], [Source 2]).
+  4. Include a medical disclaimer that this is for educational/research purposes only.
+  5. Use clear, professional medical terminology.
+  6. If an image is provided, integrate your image analysis with the retrieved references.
+
+user_prompt: |
+  Based on the following reference documents from our medical knowledge base,
+  please answer the user's question.
+
+  --- RETRIEVED REFERENCES ---
+  {context}
+  --- END REFERENCES ---
+
+  User Question: {query}
+
+user_prompt_image_suffix: |
+
+  Image Analysis: The uploaded image shows: {image_description}
+
+  Please integrate the image findings with the reference documents to provide a comprehensive answer.
+
+disclaimer: "\n\n---\n*Disclaimer: This analysis is for educational and research purposes only. Always consult qualified medical professionals for clinical decisions.*"
+
+# --- Retriever Prompts ---
+
+image_description_prompt: >
+  You are a radiologist. Describe the key findings in this medical image
+  in clinical terminology. Focus on abnormalities, anatomical structures,
+  and any notable observations. Be concise but thorough.
+
+# --- Evaluation Prompts ---
+
+faithfulness_prompt: |
+  You are an evaluation judge for a medical RAG system.
+
+  Given the CONTEXT (retrieved documents), QUESTION, and ANSWER below,
+  evaluate whether the ANSWER is faithful to the CONTEXT.
+
+  An answer is faithful if every factual claim it makes can be traced back
+  to information in the context. The answer should not hallucinate facts
+  that are not in the context.
+
+  CONTEXT:
+  {context}
+
+  QUESTION:
+  {question}
+
+  ANSWER:
+  {answer}
+
+  Respond in JSON format:
+  {{
+    "score": <float between 0.0 and 1.0>,
+    "explanation": "<brief explanation of your score>"
+  }}
+
+  Scoring guide:
+  - 1.0: Every claim in the answer is supported by the context
+  - 0.7-0.9: Most claims are supported, minor unsupported details
+  - 0.4-0.6: Mix of supported and unsupported claims
+  - 0.1-0.3: Mostly unsupported claims
+  - 0.0: Answer contradicts the context or is entirely fabricated
+
+answer_relevancy_prompt: |
+  You are an evaluation judge for a medical RAG system.
+
+  Given the QUESTION and ANSWER below, evaluate whether the ANSWER
+  is relevant to the QUESTION.
+
+  A relevant answer directly addresses what was asked, stays on topic,
+  and provides the type of information the question is seeking.
+
+  QUESTION:
+  {question}
+
+  ANSWER:
+  {answer}
+
+  Respond in JSON format:
+  {{
+    "score": <float between 0.0 and 1.0>,
+    "explanation": "<brief explanation of your score>"
+  }}
+
+  Scoring guide:
+  - 1.0: Answer directly and completely addresses the question
+  - 0.7-0.9: Answer mostly addresses the question with minor tangents
+  - 0.4-0.6: Answer partially addresses the question
+  - 0.1-0.3: Answer is mostly off-topic
+  - 0.0: Answer is completely irrelevant to the question
+
+judge_prompt: |
+  You are a senior radiologist evaluating an AI medical assistant's answer.
+
+  Given the QUESTION, GROUND TRUTH answer, AI ANSWER, and the RETRIEVED CONTEXT,
+  score the AI answer on three criteria.
+
+  QUESTION:
+  {question}
+
+  GROUND TRUTH (reference answer):
+  {ground_truth}
+
+  AI ANSWER:
+  {answer}
+
+  RETRIEVED CONTEXT:
+  {context}
+
+  Score each criterion from 0.0 to 1.0:
+
+  1. **Domain Appropriateness** (0-1): Does the answer use correct medical
+     terminology? Is it clinically accurate? Would a radiologist find it acceptable?
+     - 1.0: Terminology and clinical accuracy are excellent
+     - 0.5: Some terminology issues or minor inaccuracies
+     - 0.0: Seriously incorrect medical information
+
+  2. **Citation Accuracy** (0-1): Does the answer cite its sources (e.g., [Source 1],
+     report UIDs)? Do the citations match the actual content of the retrieved documents?
+     - 1.0: All claims are properly cited with correct source references
+     - 0.5: Some citations present but incomplete or partially incorrect
+     - 0.0: No citations or completely wrong citations
+
+  3. **Answer Completeness** (0-1): Does the answer cover the key points from
+     the ground truth? Are important findings mentioned?
+     - 1.0: All key points from ground truth are covered
+     - 0.5: Some key points covered, some missing
+     - 0.0: Major key points missing entirely
+
+  Respond in JSON format only:
+  {{
+    "domain_appropriateness": <float>,
+    "citation_accuracy": <float>,
+    "answer_completeness": <float>,
+    "explanation": "<brief justification covering all three criteria>"
+  }}
+
+# --- QA Generation Prompts ---
+
+factual_qa_prompt: |
+  Given this radiology report, generate {n} QA pairs in JSON format.
+  Each QA pair must test factual understanding of the report content.
+
+  Report UID: {uid}
+  Indication: {indication}
+  Findings: {findings}
+  Impression: {impression}
+
+  Requirements:
+  - Questions should ask about specific findings, diagnoses, or observations
+  - Answers must be directly derivable from the report text
+  - Vary question types: what, where, is there, describe, etc.
+  - Keep answers concise but complete (1-3 sentences)
+
+  Return ONLY a JSON array (no markdown fences):
+  [
+    {{
+      "question": "...",
+      "ground_truth_answer": "...",
+      "category": "factual",
+      "difficulty": "easy|medium|hard"
+    }}
+  ]
+
+comparative_qa_prompt: |
+  Given these radiology reports, generate {n} QA pairs that compare findings across reports.
+
+  {reports_block}
+
+  Requirements:
+  - Questions should compare or contrast findings between 2-3 reports
+  - Reference reports by their UID numbers
+  - Answers must be derivable from the provided reports
+  - Examples: "How do the cardiac findings in report X differ from report Y?"
+
+  Return ONLY a JSON array (no markdown fences):
+  [
+    {{
+      "question": "...",
+      "ground_truth_answer": "...",
+      "relevant_report_uids": ["uid1", "uid2"],
+      "category": "comparative",
+      "difficulty": "medium|hard"
+    }}
+  ]
+
+diagnostic_qa_prompt: |
+  Given this radiology report, generate {n} QA pairs focused on diagnostic reasoning.
+
+  Report UID: {uid}
+  Indication: {indication}
+  Findings: {findings}
+  Impression: {impression}
+
+  Requirements:
+  - Questions should ask about clinical significance, differential diagnoses, or recommended follow-up
+  - Answers must be derivable from the report text
+  - Examples: "What condition is suggested by the findings?", "What follow-up is recommended?"
+
+  Return ONLY a JSON array (no markdown fences):
+  [
+    {{
+      "question": "...",
+      "ground_truth_answer": "...",
+      "category": "diagnostic",
+      "difficulty": "medium|hard"
+    }}
+  ]

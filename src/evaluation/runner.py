@@ -49,7 +49,7 @@ class QuestionResult:
     faithfulness: float
     answer_relevancy: float
     # LLM judge metrics
-    medical_appropriateness: float
+    domain_appropriateness: float
     citation_accuracy: float
     answer_completeness: float
 
@@ -70,7 +70,7 @@ class QuestionResult:
                 "ndcg": self.ndcg,
                 "faithfulness": self.faithfulness,
                 "answer_relevancy": self.answer_relevancy,
-                "medical_appropriateness": self.medical_appropriateness,
+                "domain_appropriateness": self.domain_appropriateness,
                 "citation_accuracy": self.citation_accuracy,
                 "answer_completeness": self.answer_completeness,
             },
@@ -87,7 +87,7 @@ class EvaluationReport:
         """Compute mean, min, max for each metric across all questions."""
         metric_names = [
             "context_precision", "context_recall", "reciprocal_rank", "ndcg",
-            "faithfulness", "answer_relevancy", "medical_appropriateness",
+            "faithfulness", "answer_relevancy", "domain_appropriateness",
             "citation_accuracy", "answer_completeness",
         ]
         agg = {}
@@ -115,7 +115,7 @@ class EvaluationReport:
 
         metric_names = [
             "context_precision", "context_recall", "reciprocal_rank", "ndcg",
-            "faithfulness", "answer_relevancy", "medical_appropriateness",
+            "faithfulness", "answer_relevancy", "domain_appropriateness",
             "citation_accuracy", "answer_completeness",
         ]
         result = {}
@@ -288,7 +288,7 @@ def run_evaluation(
 
             faith_score = faith.score
             relevancy_score = relevancy.score
-            med_approp = judge.medical_appropriateness
+            med_approp = judge.domain_appropriateness
             cite_acc = judge.citation_accuracy
             completeness = judge.answer_completeness
 
@@ -307,7 +307,7 @@ def run_evaluation(
             ndcg=ndcg.score,
             faithfulness=faith_score,
             answer_relevancy=relevancy_score,
-            medical_appropriateness=med_approp,
+            domain_appropriateness=med_approp,
             citation_accuracy=cite_acc,
             answer_completeness=completeness,
         )

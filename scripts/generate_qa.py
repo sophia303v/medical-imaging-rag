@@ -23,6 +23,7 @@ from pathlib import Path
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
 import config
+from src.prompt_loader import get as get_prompt
 
 
 def _quality_score(report: dict) -> float:
@@ -59,75 +60,6 @@ def select_reports(reports: list[dict], num_reports: int, seed: int = 42) -> lis
     return [r for r, _ in selected]
 
 
-FACTUAL_PROMPT = """\
-Given this radiology report, generate {n} QA pairs in JSON format.
-Each QA pair must test factual understanding of the report content.
-
-Report UID: {uid}
-Indication: {indication}
-Findings: {findings}
-Impression: {impression}
-
-Requirements:
-- Questions should ask about specific findings, diagnoses, or observations
-- Answers must be directly derivable from the report text
-- Vary question types: what, where, is there, describe, etc.
-- Keep answers concise but complete (1-3 sentences)
-
-Return ONLY a JSON array (no markdown fences):
-[
-  {{
-    "question": "...",
-    "ground_truth_answer": "...",
-    "category": "factual",
-    "difficulty": "easy|medium|hard"
-  }}
-]"""
-
-COMPARATIVE_PROMPT = """\
-Given these radiology reports, generate {n} QA pairs that compare findings across reports.
-
-{reports_block}
-
-Requirements:
-- Questions should compare or contrast findings between 2-3 reports
-- Reference reports by their UID numbers
-- Answers must be derivable from the provided reports
-- Examples: "How do the cardiac findings in report X differ from report Y?"
-
-Return ONLY a JSON array (no markdown fences):
-[
-  {{
-    "question": "...",
-    "ground_truth_answer": "...",
-    "relevant_report_uids": ["uid1", "uid2"],
-    "category": "comparative",
-    "difficulty": "medium|hard"
-  }}
-]"""
-
-DIAGNOSTIC_PROMPT = """\
-Given this radiology report, generate {n} QA pairs focused on diagnostic reasoning.
-
-Report UID: {uid}
-Indication: {indication}
-Findings: {findings}
-Impression: {impression}
-
-Requirements:
-- Questions should ask about clinical significance, differential diagnoses, or recommended follow-up
-- Answers must be derivable from the report text
-- Examples: "What condition is suggested by the findings?", "What follow-up is recommended?"
-
-Return ONLY a JSON array (no markdown fences):
-[
-  {{
-    "question": "...",
-    "ground_truth_answer": "...",
-    "category": "diagnostic",
-    "difficulty": "medium|hard"
-  }}
-]"""
 
 
 def _call_gemini(client, prompt: str, max_retries: int = 3) -> str:
@@ -170,7 +102,7 @@ def _parse_json_response(text: str) -> list[dict]:
 
 def generate_factual_qa(client, report: dict, n: int = 2) -> list[dict]:
     """Generate factual QA pairs for a single report."""
-    prompt = FACTUAL_PROMPT.format(
+    prompt = get_prompt("factual_qa_prompt").format(
         n=n,
         uid=report["uid"],
         indication=report.get("indication", ""),
@@ -196,7 +128,7 @@ def generate_comparative_qa(client, reports: list[dict], n: int = 2) -> list[dic
         reports_block += f"Findings: {r.get('findings', '')}\n"
         reports_block += f"Impression: {r.get('impression', '')}\n"
 
-    prompt = COMPARATIVE_PROMPT.format(n=n, reports_block=reports_block)
+    prompt = get_prompt("comparative_qa_prompt").format(n=n, reports_block=reports_block)
     text = _call_gemini(client, prompt)
     pairs = _parse_json_response(text)
 
@@ -209,7 +141,7 @@ def generate_comparative_qa(client, reports: list[dict], n: int = 2) -> list[dic
 
 def generate_diagnostic_qa(client, report: dict, n: int = 1) -> list[dict]:
     """Generate diagnostic reasoning QA pairs for a single report."""
-    prompt = DIAGNOSTIC_PROMPT.format(
+    prompt = get_prompt("diagnostic_qa_prompt").format(
         n=n,
         uid=report["uid"],
         indication=report.get("indication", ""),

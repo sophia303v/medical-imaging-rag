@@ -35,6 +35,10 @@ OLLAMA_BASE_URL = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
 VISION_BACKEND = os.getenv("VISION_BACKEND", "gemini")
 OLLAMA_VISION_MODEL = os.getenv("OLLAMA_VISION_MODEL", "llava:7b")
 
+# Prompt template: name of a YAML file under prompts/ (without .yaml extension)
+# Available: "default" (domain-agnostic), "medical" (radiology-specific)
+PROMPT_TEMPLATE = os.getenv("PROMPT_TEMPLATE", "default")
+
 # RAG Settings
 CHUNK_SIZE = 512          # tokens per chunk (approx)
 CHUNK_OVERLAP = 50        # overlap between chunks
@@ -62,6 +66,7 @@ EXPERIMENT_PARAMS = [
     "OLLAMA_BASE_URL",
     "VISION_BACKEND",
     "OLLAMA_VISION_MODEL",
+    "PROMPT_TEMPLATE",
     "CHUNK_SIZE",
     "CHUNK_OVERLAP",
     "TOP_K",

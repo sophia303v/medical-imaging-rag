@@ -25,7 +25,7 @@ METRIC_LABELS = {
     "context_recall": "Ctx Recall",
     "faithfulness": "Faithfulness",
     "answer_relevancy": "Relevancy",
-    "medical_appropriateness": "Medical",
+    "domain_appropriateness": "Domain",
     "citation_accuracy": "Citation",
     "answer_completeness": "Completeness",
 }
@@ -145,7 +145,7 @@ def render_eval_dashboard():
     gen_means = [f_agg[m]["mean"] for m in ["faithfulness", "answer_relevancy"] if f_agg[m]["mean"] >= 0]
     gen_avg = sum(gen_means) / len(gen_means) if gen_means else 0
 
-    judge_means = [f_agg[m]["mean"] for m in ["medical_appropriateness", "citation_accuracy", "answer_completeness"] if f_agg[m]["mean"] >= 0]
+    judge_means = [f_agg[m]["mean"] for m in ["domain_appropriateness", "citation_accuracy", "answer_completeness"] if f_agg[m]["mean"] >= 0]
     judge_avg = sum(judge_means) / len(judge_means) if judge_means else 0
 
     c1, c2, c3, c4 = st.columns(4)
@@ -153,11 +153,11 @@ def render_eval_dashboard():
     c2.metric("Retrieval Quality", f"{retrieval_avg:.3f}", help="Ctx Precision + Recall")
     c3.metric("Generation Quality", f"{gen_avg:.3f}", help="Faithfulness + Relevancy")
     c4.metric(
-        "Medical Judge",
+        "Domain Judge",
         f"{judge_avg:.3f}" if judge_avg > 0 else "N/A",
         delta=f"{len(filtered)} questions",
         delta_color="off",
-        help="Medical + Citation + Completeness",
+        help="Domain + Citation + Completeness",
     )
 
     st.divider()
@@ -415,23 +415,23 @@ METRIC_GUIDE = {
             "pneumonia findings instead would score low on relevancy."
         ),
     },
-    "medical_appropriateness": {
-        "name": "Medical Appropriateness",
+    "domain_appropriateness": {
+        "name": "Domain Appropriateness",
         "group": "LLM Judge (Domain)",
         "requires_llm": True,
-        "formula": "Senior radiologist LLM judges clinical accuracy & terminology",
+        "formula": "Domain expert LLM judges accuracy & terminology",
         "description": (
-            "Does the answer use correct medical terminology? Is it clinically accurate? "
-            "Would a radiologist find the answer acceptable and professional?"
+            "Does the answer use correct domain terminology? Is the information accurate? "
+            "Would a domain expert find the answer acceptable and professional?"
         ),
         "scoring": {
-            "1.0": "Excellent terminology and clinical accuracy",
+            "1.0": "Excellent terminology and accuracy",
             "0.5": "Some terminology issues or minor inaccuracies",
-            "0.0": "Seriously incorrect medical information",
+            "0.0": "Seriously incorrect information",
         },
         "example": (
-            "Using 'cardiomegaly' correctly vs. saying 'the heart is too fat' — "
-            "the former demonstrates appropriate medical language."
+            "Using correct domain-specific terminology vs. casual/incorrect phrasing — "
+            "the former demonstrates appropriate professional language."
         ),
     },
     "citation_accuracy": {
@@ -533,7 +533,7 @@ def render_metric_guide():
 |-------|---------|--------|
 | **Retrieval** | Context Precision, Context Recall | Set comparison against golden UIDs (no LLM needed) |
 | **Generation** | Faithfulness, Answer Relevancy | LLM evaluates answer vs. context / question |
-| **Domain Judge** | Medical Appropriateness, Citation Accuracy, Answer Completeness | LLM-as-radiologist evaluates against ground truth |
+| **Domain Judge** | Domain Appropriateness, Citation Accuracy, Answer Completeness | LLM-as-expert evaluates against ground truth |
 
 - A score of **-1.0** means the metric was skipped or the LLM call failed. It is displayed as **N/A** and excluded from averages.
 - Retrieval metrics can run offline (`--retrieval-only` flag). All other metrics require an LLM backend (Gemini or Ollama).

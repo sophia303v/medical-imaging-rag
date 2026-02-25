@@ -1,8 +1,8 @@
 """
-LLM-as-Judge evaluation for medical domain quality.
+LLM-as-Judge evaluation for domain quality.
 
 Uses a single LLM call per question to evaluate 3 criteria:
-- Medical Appropriateness: correct terminology, clinically accurate
+- Domain Appropriateness: correct terminology, accurate information
 - Citation Accuracy: sources cited and match content
 - Answer Completeness: covers key points from ground truth
 """
@@ -13,12 +13,13 @@ import re
 import requests
 
 import config
+from src.prompt_loader import get as get_prompt
 
 
 @dataclass
 class JudgeResult:
     """Result of LLM judge evaluation for a single question."""
-    medical_appropriateness: float  # 0.0 to 1.0
+    domain_appropriateness: float   # 0.0 to 1.0
     citation_accuracy: float        # 0.0 to 1.0
     answer_completeness: float      # 0.0 to 1.0
     explanation: str
@@ -26,58 +27,12 @@ class JudgeResult:
     @property
     def average_score(self) -> float:
         scores = [
-            self.medical_appropriateness,
+            self.domain_appropriateness,
             self.citation_accuracy,
             self.answer_completeness,
         ]
         valid = [s for s in scores if s >= 0]
         return round(sum(valid) / len(valid), 4) if valid else -1.0
-
-
-JUDGE_PROMPT = """You are a senior radiologist evaluating an AI medical assistant's answer.
-
-Given the QUESTION, GROUND TRUTH answer, AI ANSWER, and the RETRIEVED CONTEXT,
-score the AI answer on three criteria.
-
-QUESTION:
-{question}
-
-GROUND TRUTH (reference answer):
-{ground_truth}
-
-AI ANSWER:
-{answer}
-
-RETRIEVED CONTEXT:
-{context}
-
-Score each criterion from 0.0 to 1.0:
-
-1. **Medical Appropriateness** (0-1): Does the answer use correct medical
-   terminology? Is it clinically accurate? Would a radiologist find it acceptable?
-   - 1.0: Terminology and clinical accuracy are excellent
-   - 0.5: Some terminology issues or minor inaccuracies
-   - 0.0: Seriously incorrect medical information
-
-2. **Citation Accuracy** (0-1): Does the answer cite its sources (e.g., [Source 1],
-   report UIDs)? Do the citations match the actual content of the retrieved documents?
-   - 1.0: All claims are properly cited with correct source references
-   - 0.5: Some citations present but incomplete or partially incorrect
-   - 0.0: No citations or completely wrong citations
-
-3. **Answer Completeness** (0-1): Does the answer cover the key points from
-   the ground truth? Are important findings mentioned?
-   - 1.0: All key points from ground truth are covered
-   - 0.5: Some key points covered, some missing
-   - 0.0: Major key points missing entirely
-
-Respond in JSON format only:
-{{
-  "medical_appropriateness": <float>,
-  "citation_accuracy": <float>,
-  "answer_completeness": <float>,
-  "explanation": "<brief justification covering all three criteria>"
-}}"""
 
 
 def judge_answer(
@@ -98,7 +53,7 @@ def judge_answer(
     Returns:
         JudgeResult with scores for each criterion
     """
-    prompt = JUDGE_PROMPT.format(
+    prompt = get_prompt("judge_prompt").format(
         question=question,
         ground_truth=ground_truth,
         answer=answer,
@@ -139,7 +94,7 @@ def judge_answer(
             return round(max(0.0, min(1.0, float(v))), 4)
 
         return JudgeResult(
-            medical_appropriateness=clamp(parsed["medical_appropriateness"]),
+            domain_appropriateness=clamp(parsed["domain_appropriateness"]),
             citation_accuracy=clamp(parsed["citation_accuracy"]),
             answer_completeness=clamp(parsed["answer_completeness"]),
             explanation=parsed.get("explanation", ""),
@@ -147,7 +102,7 @@ def judge_answer(
 
     except Exception as e:
         return JudgeResult(
-            medical_appropriateness=-1.0,
+            domain_appropriateness=-1.0,
             citation_accuracy=-1.0,
             answer_completeness=-1.0,
             explanation=f"LLM judge failed: {e}",

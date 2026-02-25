@@ -26,7 +26,7 @@ METRIC_LABELS = {
     "context_recall": "Ctx Recall",
     "faithfulness": "Faithfulness",
     "answer_relevancy": "Relevancy",
-    "medical_appropriateness": "Medical",
+    "domain_appropriateness": "Domain",
     "citation_accuracy": "Citation",
     "answer_completeness": "Completeness",
 }
@@ -38,7 +38,7 @@ METRIC_DESCRIPTIONS = {
     "ndcg": "考慮排序的檢索品質，越前面的相關文件分數越高 (Normalized DCG)",
     "faithfulness": "答案是否忠於檢索到的 context，不捏造事實 (LLM 評分)",
     "answer_relevancy": "答案是否切題、有回答到問題 (LLM 評分)",
-    "medical_appropriateness": "醫學術語是否正確、臨床上是否合理 (LLM Judge)",
+    "domain_appropriateness": "領域術語是否正確、內容是否合理 (LLM Judge)",
     "citation_accuracy": "是否有引用來源、引用是否正確 (LLM Judge)",
     "answer_completeness": "相比 ground truth，答案的完整度如何 (LLM Judge)",
 }
@@ -151,7 +151,7 @@ def generate_html_report(
       <tr>
         <th>ID</th><th>Question</th><th>Category</th><th>Difficulty</th>
         <th>Ctx Prec</th><th>Ctx Rec</th><th>Faith</th><th>Relev</th>
-        <th>Medical</th><th>Citation</th><th>Complete</th>
+        <th>Domain</th><th>Citation</th><th>Complete</th>
       </tr>
       {detail_rows}
     </table>
@@ -208,7 +208,7 @@ def _build_stat_boxes(agg: dict, report: EvaluationReport) -> str:
     gen_means = [agg[m]["mean"] for m in gen_metrics if agg[m]["mean"] >= 0]
     gen_avg = sum(gen_means) / len(gen_means) if gen_means else 0
 
-    judge_metrics = ["medical_appropriateness", "citation_accuracy", "answer_completeness"]
+    judge_metrics = ["domain_appropriateness", "citation_accuracy", "answer_completeness"]
     judge_means = [agg[m]["mean"] for m in judge_metrics if agg[m]["mean"] >= 0]
     judge_avg = sum(judge_means) / len(judge_means) if judge_means else 0
 
@@ -216,7 +216,7 @@ def _build_stat_boxes(agg: dict, report: EvaluationReport) -> str:
     <div class="stat-box"><div class="value">{overall:.2f}</div><div class="label">Overall Score</div></div>
     <div class="stat-box"><div class="value">{retrieval_avg:.2f}</div><div class="label">Retrieval Quality</div></div>
     <div class="stat-box"><div class="value">{gen_avg:.2f}</div><div class="label">Generation Quality</div></div>
-    <div class="stat-box"><div class="value">{judge_avg:.2f}</div><div class="label">Medical Judge</div></div>
+    <div class="stat-box"><div class="value">{judge_avg:.2f}</div><div class="label">Domain Judge</div></div>
     <div class="stat-box"><div class="value">{len(report.results)}</div><div class="label">Questions</div></div>
     """
 
@@ -304,7 +304,7 @@ def _build_detail_table(report: EvaluationReport) -> str:
     for r in report.results:
         scores = [
             r.context_precision, r.context_recall, r.faithfulness,
-            r.answer_relevancy, r.medical_appropriateness,
+            r.answer_relevancy, r.domain_appropriateness,
             r.citation_accuracy, r.answer_completeness,
         ]
         cells = "".join(

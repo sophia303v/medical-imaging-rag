@@ -10,20 +10,7 @@ from PIL import Image
 
 import config
 from src.retriever import RetrievalResult
-
-
-SYSTEM_PROMPT = """You are a medical imaging AI assistant. Your role is to help analyze
-radiology reports and medical images based on retrieved reference documents.
-
-IMPORTANT RULES:
-1. Only answer based on the provided reference documents and image analysis.
-2. If the reference documents don't contain relevant information, say so clearly.
-3. Always cite which source(s) you used in your answer (e.g., [Source 1], [Source 2]).
-4. Include a medical disclaimer that this is for educational/research purposes only.
-5. Use clear, professional medical terminology.
-6. If an image is provided, integrate your image analysis with the retrieved references."""
-
-DISCLAIMER = "\n\n---\n*Disclaimer: This analysis is for educational and research purposes only. Always consult qualified medical professionals for clinical decisions.*"
+from src.prompt_loader import get as get_prompt
 
 
 @dataclass
@@ -36,21 +23,15 @@ class GenerationResult:
 
 def _build_prompt(retrieval: RetrievalResult) -> str:
     """Build the user prompt from retrieval results."""
-    prompt = f"""Based on the following reference documents from our medical knowledge base,
-please answer the user's question.
-
---- RETRIEVED REFERENCES ---
-{retrieval.context}
---- END REFERENCES ---
-
-User Question: {retrieval.query}"""
+    prompt = get_prompt("user_prompt").format(
+        context=retrieval.context,
+        query=retrieval.query,
+    )
 
     if retrieval.image_description:
-        prompt += f"""
-
-Image Analysis: The uploaded image shows: {retrieval.image_description}
-
-Please integrate the image findings with the reference documents to provide a comprehensive answer."""
+        prompt += get_prompt("user_prompt_image_suffix").format(
+            image_description=retrieval.image_description,
+        )
 
     return prompt
 
@@ -68,7 +49,7 @@ def _generate_gemini(prompt: str, image: Image.Image | None = None) -> str:
         model=config.GEMINI_MODEL,
         contents=contents,
         config={
-            "system_instruction": SYSTEM_PROMPT,
+            "system_instruction": get_prompt("system_prompt"),
             "temperature": 0.3,
             "max_output_tokens": 1024,
         },
@@ -87,7 +68,7 @@ def _generate_ollama(prompt: str, image: Image.Image | None = None) -> str:
     body: dict = {
         "model": config.OLLAMA_MODEL,
         "prompt": prompt,
-        "system": SYSTEM_PROMPT,
+        "system": get_prompt("system_prompt"),
         "stream": False,
         "options": {"temperature": 0.3, "num_predict": 1024},
     }
@@ -152,8 +133,9 @@ def generate_answer(
             print(f"All LLM backends failed ({e2}), using local fallback.")
             answer = _generate_local(prompt, retrieval)
 
-    if "disclaimer" not in answer.lower() and "educational" not in answer.lower():
-        answer += DISCLAIMER
+    disclaimer = get_prompt("disclaimer")
+    if "disclaimer" not in answer.lower():
+        answer += disclaimer
 
     return GenerationResult(
         answer=answer,

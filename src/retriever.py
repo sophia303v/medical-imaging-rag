@@ -9,13 +9,7 @@ from PIL import Image
 import config
 from src.embedding import get_client
 from src.vector_store import search
-
-
-_RADIOLOGY_PROMPT = (
-    "You are a radiologist. Describe the key findings in this medical image "
-    "in clinical terminology. Focus on abnormalities, anatomical structures, "
-    "and any notable observations. Be concise but thorough."
-)
+from src.prompt_loader import get as get_prompt
 
 
 @dataclass
@@ -43,7 +37,7 @@ def _describe_image_gemini(image: Image.Image) -> str:
 
     response = client.models.generate_content(
         model=config.GEMINI_MODEL,
-        contents=[_RADIOLOGY_PROMPT, image],
+        contents=[get_prompt("image_description_prompt"), image],
     )
 
     return response.text
@@ -59,7 +53,7 @@ def _describe_image_ollama(image: Image.Image) -> str:
         f"{config.OLLAMA_BASE_URL}/api/generate",
         json={
             "model": config.OLLAMA_VISION_MODEL,
-            "prompt": _RADIOLOGY_PROMPT,
+            "prompt": get_prompt("image_description_prompt"),
             "images": [b64],
             "stream": False,
             "options": {"temperature": 0.3},
