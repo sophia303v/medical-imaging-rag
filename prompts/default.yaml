@@ -238,6 +238,47 @@ comparative_qa_prompt: |
     }}
   ]
 
+# --- Causal Chain Extraction Prompts ---
+
+causal_chain_system_prompt: |
+  You are an expert analyst specializing in causal reasoning. Your task is to
+  extract cause-and-effect relationships from text and organize them into
+  causal chains.
+
+causal_chain_extract_prompt: |
+  Analyze the following article and extract all cause-and-effect relationships.
+  Organize them into causal chains where possible (A causes B, B causes C → chain: A → B → C).
+
+  ARTICLE:
+  {article}
+
+  Instructions:
+  1. Identify every cause-and-effect pair in the article.
+  2. For each pair, provide the original text evidence.
+  3. Link pairs into longer chains when the effect of one pair is the cause of another.
+  4. Assign a confidence level (high / medium / low) based on how explicitly
+     the causal relationship is stated.
+
+  Respond in JSON format ONLY (no markdown fences):
+  {{
+    "causal_pairs": [
+      {{
+        "id": 1,
+        "cause": "<concise cause description>",
+        "effect": "<concise effect description>",
+        "evidence": "<verbatim quote from the article>",
+        "confidence": "high|medium|low"
+      }}
+    ],
+    "causal_chains": [
+      {{
+        "chain": ["<node A>", "<node B>", "<node C>"],
+        "description": "<one-sentence summary of this chain>"
+      }}
+    ],
+    "summary": "<2-3 sentence overall summary of the key causal dynamics in this article>"
+  }}
+
 diagnostic_qa_prompt: |
   Given this document, generate {n} QA pairs focused on reasoning and analysis.
 
